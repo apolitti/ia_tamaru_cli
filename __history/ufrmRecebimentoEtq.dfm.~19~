@@ -1,0 +1,312 @@
+object frmRecebimentoEtq: TfrmRecebimentoEtq
+  Left = 0
+  Top = 0
+  Caption = 'Recebimento - Emiss'#227'o de Etiquetas'
+  ClientHeight = 464
+  ClientWidth = 784
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Pn_Principal: TPanel
+    Left = 0
+    Top = 35
+    Width = 784
+    Height = 391
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+    object Pn_Principal1: TPanel
+      Left = 0
+      Top = 0
+      Width = 784
+      Height = 36
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 0
+      object Label2: TLabel
+        Left = 15
+        Top = 8
+        Width = 55
+        Height = 13
+        Caption = 'Fornecedor'
+      end
+      object Label3: TLabel
+        Left = 359
+        Top = 8
+        Width = 68
+        Height = 13
+        Caption = 'Data Emiss'#227'o:'
+      end
+      object Label4: TLabel
+        Left = 527
+        Top = 8
+        Width = 68
+        Height = 13
+        Caption = 'Data Entrada:'
+      end
+      object Ed_AGN_ST_FANTASIA: TDBEdit
+        Left = 76
+        Top = 6
+        Width = 277
+        Height = 21
+        TabStop = False
+        Color = cl3DLight
+        DataField = 'AGN_ST_FANTASIA'
+        DataSource = Ds_Rci
+        ReadOnly = True
+        TabOrder = 0
+      end
+      object Ed_rcb_dt_documento: TDBEdit
+        Left = 432
+        Top = 4
+        Width = 81
+        Height = 21
+        TabStop = False
+        Color = cl3DLight
+        DataField = 'rcb_dt_documento'
+        DataSource = Ds_Rci
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object Ed_rcb_dt_movimento: TDBEdit
+        Left = 600
+        Top = 4
+        Width = 81
+        Height = 21
+        TabStop = False
+        Color = cl3DLight
+        DataField = 'rcb_dt_movimento'
+        DataSource = Ds_Rci
+        ReadOnly = True
+        TabOrder = 2
+      end
+    end
+    object Gd_Avr: TDBGrid
+      Left = 0
+      Top = 36
+      Width = 784
+      Height = 314
+      Align = alClient
+      DataSource = Ds_Rci
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      TabOrder = 1
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'iar_in_sequencia'
+          ReadOnly = True
+          Title.Caption = 'Seq.'
+          Width = 30
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'pro_in_codigo'
+          ReadOnly = True
+          Title.Caption = 'Cod. Mega'
+          Width = 68
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'pro_st_alternativo'
+          ReadOnly = True
+          Title.Caption = 'Cod. Alternativo'
+          Width = 85
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'pro_st_descricao'
+          ReadOnly = True
+          Title.Caption = 'Descri'#231#227'o'
+          Width = 233
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'mvl_re_quantidade'
+          ReadOnly = True
+          Title.Caption = 'Qtde.'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'uni_st_unidade'
+          ReadOnly = True
+          Title.Caption = 'U.M.'
+          Width = 40
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'mvl_st_loteforne'
+          ReadOnly = True
+          Title.Caption = 'Lote'
+          Width = 120
+          Visible = True
+        end
+        item
+          Alignment = taRightJustify
+          Color = clGradientActiveCaption
+          Expanded = False
+          FieldName = 'etq_in_qtde'
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Etiquetas'
+          Width = 55
+          Visible = True
+        end>
+    end
+    object Pn_Principal2: TPanel
+      Left = 0
+      Top = 350
+      Width = 784
+      Height = 41
+      Align = alBottom
+      BevelOuter = bvNone
+      TabOrder = 2
+      object Label5: TLabel
+        Left = 6
+        Top = 10
+        Width = 83
+        Height = 13
+        Caption = 'Inspecionado por'
+      end
+      object Label6: TLabel
+        Left = 221
+        Top = 10
+        Width = 54
+        Height = 13
+        Caption = 'Impressora'
+      end
+      object Ed_Inspecionado: TEdit
+        Left = 94
+        Top = 6
+        Width = 121
+        Height = 21
+        TabOrder = 0
+      end
+      object Cb_Impressora: TComboBox
+        Left = 281
+        Top = 6
+        Width = 232
+        Height = 21
+        Style = csDropDownList
+        Sorted = True
+        TabOrder = 1
+      end
+    end
+  end
+  object Pn_Topo: TPanel
+    Left = 0
+    Top = 0
+    Width = 784
+    Height = 35
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    object Lb_CMAQ_IN_CODIGO: TLabel
+      Left = 15
+      Top = 12
+      Width = 52
+      Height = 13
+      Caption = 'Nota Fiscal'
+    end
+    object Label1: TLabel
+      Left = 211
+      Top = 12
+      Width = 112
+      Height = 13
+      Caption = 'Documento Fornecedor'
+    end
+    object Ed_AVR_ST_NOTA: TEdit
+      Left = 72
+      Top = 8
+      Width = 121
+      Height = 21
+      TabOrder = 0
+      OnKeyDown = Ed_AVR_ST_NOTAKeyDown
+    end
+    object Ed_AGN_ST_CGC: TEdit
+      Left = 329
+      Top = 8
+      Width = 121
+      Height = 21
+      TabOrder = 1
+      OnKeyDown = Ed_AGN_ST_CGCKeyDown
+    end
+    object Bo_Procurar: TBitBtn
+      Left = 472
+      Top = 4
+      Width = 75
+      Height = 25
+      Caption = 'Procurar'
+      TabOrder = 2
+      OnClick = Bo_ProcurarClick
+    end
+  end
+  object Panel4: TPanel
+    Left = 0
+    Top = 426
+    Width = 784
+    Height = 38
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 2
+    DesignSize = (
+      784
+      38)
+    object Bo_Confirmar: TBitBtn
+      Left = 623
+      Top = 6
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Confirmar'
+      TabOrder = 0
+      OnClick = Bo_ConfirmarClick
+    end
+    object Bo_Fechar: TBitBtn
+      Left = 704
+      Top = 6
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Fechar'
+      TabOrder = 1
+      OnClick = Bo_FecharClick
+    end
+  end
+  object Cl_Rci: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'rci_in_sequencia'
+    Params = <>
+    Left = 192
+    Top = 192
+  end
+  object Ds_Rci: TDataSource
+    DataSet = Cl_Rci
+    Left = 192
+    Top = 240
+  end
+  object Cl_Imp: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 240
+    Top = 192
+  end
+end

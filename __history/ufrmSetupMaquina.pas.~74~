@@ -1,0 +1,419 @@
+unit ufrmSetupMaquina;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Data.DB, Vcl.Grids, Vcl.DBGrids, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, System.JSON, Datasnap.DBClient,
+  Vcl.Mask, Vcl.DBCtrls;
+
+type
+  TfrmSetupMaquina = class(TForm)
+    Cl_Cmq: TClientDataSet;
+    Cl_Opd: TClientDataSet;
+    Ds_Opd: TDataSource;
+    Pn_Topo: TPanel;
+    Lb_CMAQ_IN_CODIGO: TLabel;
+    Ed_CMAQ_IN_CODIGO: TEdit;
+    Bo_OK: TBitBtn;
+    Pn_Principal: TPanel;
+    Lb_ORD_IN_CODIGO: TLabel;
+    Bevel2: TBevel;
+    Lb_OPD_IN_CODIGO: TLabel;
+    Ed_ORD_IN_CODIGO: TEdit;
+    Bo_Confirmar: TBitBtn;
+    Ed_OPD_IN_CODIGO: TEdit;
+    Bo_Operador_Ins: TBitBtn;
+    Gd_Operadores: TDBGrid;
+    Bo_Operador_Del: TBitBtn;
+    Rg_OPD_CH_FUNCAO: TRadioGroup;
+    Pn_Rodape: TPanel;
+    Bo_Fechar: TBitBtn;
+    Ed_CMAQ_ST_DESCRICAO: TDBEdit;
+    Lb_CMAQ_ST_DESCRICAO: TLabel;
+    Ds_Cmq: TDataSource;
+    Bevel1: TBevel;
+    Ck_GeraInspecao: TCheckBox;
+    procedure Bo_FecharClick(Sender: TObject);
+    procedure Bo_OKClick(Sender: TObject);
+    procedure Bo_ConfirmarClick(Sender: TObject);
+    procedure Bo_Operador_InsClick(Sender: TObject);
+    procedure Bo_Operador_DelClick(Sender: TObject);
+    procedure Cl_OpdBeforeDelete(DataSet: TDataSet);
+    procedure Ed_CMAQ_IN_CODIGOKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Ed_ORD_IN_CODIGOKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Ed_OPD_IN_CODIGOKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Ed_CMAQ_IN_CODIGOExit(Sender: TObject);
+    procedure Ed_ORD_IN_CODIGOExit(Sender: TObject);
+  private
+    { Private declarations }
+    procedure f_maquina_lst(p_fil_in_codigo, p_cmaq_in_codigo : Integer);
+    procedure f_operadormaquina_lst(p_fil_in_codigo, p_cmaq_in_codigo : Integer);
+    function  p_ordemmaquina_upd(p_fil_in_codigo, p_cmaq_in_codigo, p_ord_in_codigo: Integer) : Boolean;
+    procedure p_operadormaquina_ins(p_fil_in_codigo, p_cmaq_in_codigo : Integer; p_opd_st_alternativo, p_opd_ch_funcao : string);
+    procedure p_operadormaquina_del(p_fil_in_codigo, p_cmaq_in_codigo : Integer; p_opd_st_alternativo : string);
+  public
+    { Public declarations }
+  end;
+
+var
+  frmSetupMaquina: TfrmSetupMaquina;
+
+implementation
+
+{$R *.dfm}
+
+uses uDM;
+
+function TfrmSetupMaquina.p_ordemmaquina_upd(p_fil_in_codigo, p_cmaq_in_codigo, p_ord_in_codigo: Integer): Boolean;
+begin
+
+  try
+
+    Screen.Cursor := crSQLWait;
+
+    try
+      DM.IdHTTP1.Put(wURL + 'p_ordemmaquina_upd/' + IntToStr(p_fil_in_codigo) + '/' + IntToStr(p_cmaq_in_codigo) + '/' + IntToStr(p_ord_in_codigo),TStringStream.Create);
+      Result := True;
+    except
+      on e: exception do
+      begin
+        Result        := False;
+        Screen.Cursor := crDefault;
+        raise Exception.Create(e.Message);
+      end;
+    end;
+
+  finally
+
+    Screen.Cursor := crDefault;
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.Bo_ConfirmarClick(Sender: TObject);
+var
+  icmaq_in_codigo : Integer;
+  iord_in_codigo  : Integer;
+begin
+
+  icmaq_in_codigo := StrToInt(Ed_CMAQ_IN_CODIGO.Text);
+
+  if (Ed_ORD_IN_CODIGO.Text = '') then
+  begin
+    iord_in_codigo := 0;
+  end
+  else
+  begin
+    if not(TryStrToInt(Ed_ORD_IN_CODIGO.Text,iord_in_codigo)) then
+    begin
+      Ed_ORD_IN_CODIGO.SetFocus;
+      Ed_ORD_IN_CODIGO.SelectAll;
+      raise Exception.Create('Ordem inválida!');
+    end;
+  end;
+
+  if (Cl_Cmq.FieldByName('ord_in_codigo_setup').AsInteger <> iord_in_codigo) then
+  begin
+
+    if p_ordemmaquina_upd(wFIL_IN_CODIGO,icmaq_in_codigo,iord_in_codigo) = False then
+    begin
+      Exit
+    end;
+
+    f_maquina_lst(wFIL_IN_CODIGO,icmaq_in_codigo);
+    f_operadormaquina_lst(wFIL_IN_CODIGO,icmaq_in_codigo);
+
+    ShowMessage('Ordem definida com sucesso!');
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.Bo_FecharClick(Sender: TObject);
+begin
+
+  if Pn_Topo.Enabled = False then
+  begin
+
+    if (Ck_GeraInspecao.Checked) then
+    begin
+        if Application.MessageBox(pChar('Deseja realmente gerar inspeção?'), pChar(Application.Title), MB_ICONQUESTION + MB_YESNO) = IDYES Then
+        begin
+
+        end;
+    end;
+
+    Ed_CMAQ_IN_CODIGO.Clear;
+    Pn_Topo.Enabled := True;
+    Pn_Principal.Visible := False;
+    Ed_CMAQ_IN_CODIGO.SetFocus;
+
+  end
+  else
+  begin
+
+    Close;
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.Bo_OKClick(Sender: TObject);
+var
+  icmaq_in_codigo : Integer;
+begin
+
+  if not(TryStrToInt(Ed_CMAQ_IN_CODIGO.Text,icmaq_in_codigo)) then
+  begin
+    Ed_CMAQ_IN_CODIGO.SetFocus;
+    Ed_CMAQ_IN_CODIGO.SelectAll;
+    raise Exception.Create('Máquina inválida!');
+  end;
+
+  Ed_ORD_IN_CODIGO.Clear;
+  Ed_OPD_IN_CODIGO.Clear;
+  Rg_OPD_CH_FUNCAO.ItemIndex := 0;
+  Cl_Cmq.Close;
+  Cl_Opd.Close;
+
+  f_maquina_lst(wFIL_IN_CODIGO,icmaq_in_codigo);
+  f_operadormaquina_lst(wFIL_IN_CODIGO,icmaq_in_codigo);
+
+  Ck_GeraInspecao.Checked := True;
+
+  Pn_Principal.Visible := True;
+  Pn_Topo.Enabled      := False;
+
+  Ed_ORD_IN_CODIGO.SetFocus;
+
+end;
+
+procedure TfrmSetupMaquina.Bo_Operador_DelClick(Sender: TObject);
+var
+  icmaq_in_codigo     : Integer;
+  sopd_st_alternativo : string;
+begin
+
+  if (Cl_Opd.Active = False) then
+  begin
+    Exit;
+  end;
+
+  if (Cl_Opd.IsEmpty) then
+  begin
+    Exit;
+  end;
+
+  if Application.MessageBox(pChar('Deseja realmente excluir esse registro?'), pChar(Application.Title), MB_ICONQUESTION + MB_YESNO) = IDNO Then
+  begin
+    Exit;
+  end;
+
+  icmaq_in_codigo     := StrToInt(Ed_CMAQ_IN_CODIGO.Text);
+  sopd_st_alternativo := Cl_Opd.FieldByName('opd_st_alternativo').AsString;
+
+  p_operadormaquina_del(wFIL_IN_CODIGO,icmaq_in_codigo,sopd_st_alternativo);
+  f_operadormaquina_lst(wFIL_IN_CODIGO,icmaq_in_codigo);
+
+end;
+
+procedure TfrmSetupMaquina.Bo_Operador_InsClick(Sender: TObject);
+var
+  icmaq_in_codigo     : Integer;
+  sopd_st_alternativo : string;
+  sopd_ch_funcao      : string;
+begin
+
+  icmaq_in_codigo     := StrToInt(Ed_CMAQ_IN_CODIGO.Text);
+  sopd_st_alternativo := Trim(Ed_OPD_IN_CODIGO.Text);
+  case Rg_OPD_CH_FUNCAO.ItemIndex of
+    0 : sopd_ch_funcao := 'O';
+    1 : sopd_ch_funcao := 'E';
+    2 : sopd_ch_funcao := 'I';
+    3 : sopd_ch_funcao := 'X';
+  end;
+
+  if (sopd_st_alternativo = '') then
+  begin
+    Ed_OPD_IN_CODIGO.SetFocus;
+    Ed_OPD_IN_CODIGO.SelectAll;
+    raise Exception.Create('Operador inválido!');
+  end;
+
+  p_operadormaquina_ins(wFIL_IN_CODIGO,icmaq_in_codigo,sopd_st_alternativo,sopd_ch_funcao);
+  f_operadormaquina_lst(wFIL_IN_CODIGO,icmaq_in_codigo);
+
+  Ed_OPD_IN_CODIGO.Clear;
+  Ed_OPD_IN_CODIGO.SetFocus;
+
+end;
+
+procedure TfrmSetupMaquina.Cl_OpdBeforeDelete(DataSet: TDataSet);
+begin
+  Abort;
+end;
+
+procedure TfrmSetupMaquina.f_operadormaquina_lst(p_fil_in_codigo, p_cmaq_in_codigo: Integer);
+var
+  str : string;
+  js  : TJSONArray;
+begin
+
+  js  := TJSONArray.Create;
+  Str := DM.IdHTTP1.get(wURL + 'f_operadormaquina_lst/' + IntToStr(p_fil_in_codigo) + '/' + IntToStr(p_cmaq_in_codigo));
+
+  DM.JsonToDataset(Cl_Opd, Str);
+
+end;
+
+procedure TfrmSetupMaquina.Ed_CMAQ_IN_CODIGOExit(Sender: TObject);
+var
+  icmaq_in_codigo : Integer;
+begin
+
+  Ed_CMAQ_IN_CODIGO.Text := Trim(Ed_CMAQ_IN_CODIGO.Text);
+
+  if Ed_CMAQ_IN_CODIGO.Text <> '' then
+  begin
+
+    if not(TryStrToInt(Ed_CMAQ_IN_CODIGO.Text,icmaq_in_codigo)) then
+    begin
+      Ed_CMAQ_IN_CODIGO.SelectAll;
+      raise Exception.Create('Máquina inválida!');
+    end;
+
+    Bo_OKClick(Sender);
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.Ed_CMAQ_IN_CODIGOKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+end;
+
+procedure TfrmSetupMaquina.Ed_OPD_IN_CODIGOKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+end;
+
+procedure TfrmSetupMaquina.Ed_ORD_IN_CODIGOExit(Sender: TObject);
+var
+  iORD_IN_CODIGO : Integer;
+begin
+
+  Ed_ORD_IN_CODIGO.Text := Trim(Ed_ORD_IN_CODIGO.Text);
+
+  if Ed_ORD_IN_CODIGO.Text <> '' then
+  begin
+
+    if not(TryStrToInt(Ed_ORD_IN_CODIGO.Text,iORD_IN_CODIGO)) then
+    begin
+      Ed_ORD_IN_CODIGO.SelectAll;
+      raise Exception.Create('Ordem inválida!');
+    end;
+
+    if (Cl_Cmq.FieldByName('ord_in_codigo_setup').AsInteger <> iORD_IN_CODIGO) then
+    begin
+      Bo_ConfirmarClick(Sender);
+    end;
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.Ed_ORD_IN_CODIGOKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+end;
+
+procedure TfrmSetupMaquina.p_operadormaquina_del(p_fil_in_codigo, p_cmaq_in_codigo: Integer; p_opd_st_alternativo: string);
+begin
+
+  try
+
+    Screen.Cursor := crSQLWait;
+
+    try
+      DM.IdHTTP1.Put(wURL + 'p_operadormaquina_del/' + IntToStr(p_fil_in_codigo) + '/' + IntToStr(p_cmaq_in_codigo) + '/' + p_opd_st_alternativo,TStringStream.Create);
+    except
+      on e: exception do
+      begin
+        Screen.Cursor := crDefault;
+        raise Exception.Create(e.Message);
+      end;
+    end;
+
+  finally
+
+    Screen.Cursor := crDefault;
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.p_operadormaquina_ins(p_fil_in_codigo, p_cmaq_in_codigo: Integer; p_opd_st_alternativo, p_opd_ch_funcao: string);
+begin
+
+  try
+
+    Screen.Cursor := crSQLWait;
+
+    try
+      DM.IdHTTP1.Put(wURL + 'p_operadormaquina_ins/' + IntToStr(p_fil_in_codigo) + '/' + IntToStr(p_cmaq_in_codigo) + '/' + p_opd_st_alternativo + '/' + p_opd_ch_funcao,TStringStream.Create);
+    except
+      on e: exception do
+      begin
+        Screen.Cursor := crDefault;
+        raise Exception.Create(e.Message);
+      end;
+    end;
+
+  finally
+
+    Screen.Cursor := crDefault;
+
+  end;
+
+end;
+
+procedure TfrmSetupMaquina.f_maquina_lst(p_fil_in_codigo, p_cmaq_in_codigo: Integer);
+begin
+
+  DM.p_maquina_lst(Cl_Cmq,p_fil_in_codigo,p_cmaq_in_codigo);
+
+  if (Cl_Cmq.IsEmpty = True) then
+  begin
+    Ed_CMAQ_IN_CODIGO.SetFocus;
+    Ed_CMAQ_IN_CODIGO.SelectAll;
+    raise Exception.Create('Máquina não localizada!');
+  end;
+
+  if (Cl_Cmq.FieldByName('ord_in_codigo_setup').AsInteger > 0) then
+  begin
+    Ed_ORD_IN_CODIGO.Text := Cl_Cmq.FieldByName('ord_in_codigo_setup').AsString
+  end;
+
+end;
+
+end.

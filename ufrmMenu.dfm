@@ -1,0 +1,92 @@
+object frmMenu: TfrmMenu
+  Left = 0
+  Top = 0
+  Caption = 'Apontamento Eletr'#244'nico - InformAction'
+  ClientHeight = 312
+  ClientWidth = 484
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Button1: TButton
+    Left = 120
+    Top = 32
+    Width = 250
+    Height = 25
+    Caption = '1. Setup de M'#225'quinas'
+    TabOrder = 0
+    OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 120
+    Top = 63
+    Width = 250
+    Height = 25
+    Caption = '2. Aviso de Recebimento - Confirma'#231#227'o'
+    TabOrder = 1
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 120
+    Top = 94
+    Width = 250
+    Height = 25
+    Caption = '3. Aviso de Recebimento - Emiss'#227'o de Etiquetas'
+    TabOrder = 2
+    OnClick = Button3Click
+  end
+  object Button4: TButton
+    Left = 120
+    Top = 125
+    Width = 250
+    Height = 25
+    Caption = '4. Empenho de Material'
+    TabOrder = 3
+    OnClick = Button4Click
+  end
+  object Button5: TButton
+    Left = 120
+    Top = 156
+    Width = 250
+    Height = 25
+    Caption = '5. Apontamento de Produ'#231#227'o'
+    TabOrder = 4
+    OnClick = Button5Click
+  end
+  object Button6: TButton
+    Left = 120
+    Top = 187
+    Width = 250
+    Height = 25
+    Caption = '6. Consumo de Material'
+    TabOrder = 5
+    OnClick = Button6Click
+  end
+  object Button7: TButton
+    Left = 120
+    Top = 218
+    Width = 250
+    Height = 25
+    Caption = '7. Encerramento de Produ'#231#227'o'
+    TabOrder = 6
+    OnClick = Button7Click
+  end
+  object Button0: TButton
+    Left = 120
+    Top = 249
+    Width = 250
+    Height = 25
+    Caption = '0. Sair'
+    TabOrder = 7
+    OnClick = Button0Click
+  end
+end

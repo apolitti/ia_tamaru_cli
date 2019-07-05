@@ -1,0 +1,382 @@
+object frmEncerramentoProducao: TfrmEncerramentoProducao
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = bsSingle
+  Caption = 'Encerramento de Produ'#231#227'o'
+  ClientHeight = 406
+  ClientWidth = 794
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Pn_Topo: TPanel
+    Left = 0
+    Top = 0
+    Width = 794
+    Height = 31
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    ExplicitWidth = 497
+    object Lb_CMAQ_IN_CODIGO: TLabel
+      Left = 41
+      Top = 8
+      Width = 40
+      Height = 13
+      Caption = 'M'#225'quina'
+    end
+    object Ed_CMAQ_IN_CODIGO: TEdit
+      Left = 87
+      Top = 4
+      Width = 121
+      Height = 21
+      TabOrder = 0
+      OnChange = Ed_CMAQ_IN_CODIGOChange
+      OnExit = Ed_CMAQ_IN_CODIGOExit
+      OnKeyDown = Ed_CMAQ_IN_CODIGOKeyDown
+    end
+    object Bo_OK: TBitBtn
+      Left = 214
+      Top = 0
+      Width = 75
+      Height = 25
+      Caption = 'OK'
+      TabOrder = 1
+      OnClick = Bo_OKClick
+    end
+  end
+  object Pn_Principal: TPanel
+    Left = 0
+    Top = 31
+    Width = 794
+    Height = 342
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitWidth = 497
+    ExplicitHeight = 190
+    object Lb_ORD_IN_CODIGO: TLabel
+      Left = 49
+      Top = 4
+      Width = 32
+      Height = 13
+      Caption = 'Ordem'
+    end
+    object Lb_PLF_RE_QUANTIDADEORI: TLabel
+      Left = 155
+      Top = 6
+      Width = 60
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'Qtde.Ordem'
+    end
+    object Lb_APO_RE_QTDEPRODUZIDAKG: TLabel
+      Left = 3
+      Top = 83
+      Width = 80
+      Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Qtde.Produzida'
+    end
+    object Lb_PRO_IN_CODIGO: TLabel
+      Left = 43
+      Top = 26
+      Width = 38
+      Height = 13
+      Caption = 'Produto'
+    end
+    object Lb_PRO_ST_ALTERNATIVO: TLabel
+      Left = 162
+      Top = 26
+      Width = 53
+      Height = 13
+      Caption = 'Alternativo'
+    end
+    object Lb_PRO_ST_DESCRICAO: TLabel
+      Left = 35
+      Top = 48
+      Width = 46
+      Height = 13
+      Caption = 'Descri'#231#227'o'
+    end
+    object Label2: TLabel
+      Left = 343
+      Top = 4
+      Width = 23
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'U.M.'
+    end
+    object Bevel1: TBevel
+      Left = 8
+      Top = 72
+      Width = 777
+      Height = 9
+      Shape = bsTopLine
+    end
+    object Bevel2: TBevel
+      Left = 8
+      Top = 106
+      Width = 777
+      Height = 9
+      Shape = bsTopLine
+    end
+    object Lb_APO_RE_QTDEPRODUZIDAKG1: TLabel
+      Left = 211
+      Top = 83
+      Width = 15
+      Height = 13
+      AutoSize = False
+      Caption = 'kg'
+    end
+    object Bo_Confirmar: TBitBtn
+      Left = 358
+      Top = 307
+      Width = 75
+      Height = 25
+      Caption = 'Confirmar'
+      TabOrder = 7
+      OnClick = Bo_ConfirmarClick
+    end
+    object Ed_ORD_IN_CODIGO: TDBEdit
+      Left = 87
+      Top = 1
+      Width = 65
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'ORD_IN_CODIGO'
+      DataSource = Ds_Ord
+      ReadOnly = True
+      TabOrder = 0
+    end
+    object Ed_PLF_RE_QUANTIDADEORI: TDBEdit
+      Left = 221
+      Top = 1
+      Width = 120
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'PLF_RE_QUANTIDADEORI'
+      DataSource = Ds_Ord
+      ReadOnly = True
+      TabOrder = 1
+    end
+    object Ed_APO_RE_QTDEPRODUZIDAKG: TDBEdit
+      Left = 87
+      Top = 80
+      Width = 121
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'APO_RE_QTDEPRODUZIDAKG'
+      DataSource = Ds_Enc
+      ReadOnly = True
+      TabOrder = 6
+    end
+    object Ed_PRO_IN_CODIGO: TDBEdit
+      Left = 87
+      Top = 23
+      Width = 65
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'PRO_IN_CODIGO'
+      DataSource = Ds_Ord
+      ReadOnly = True
+      TabOrder = 3
+    end
+    object Ed_PRO_ST_ALTERNATIVO: TDBEdit
+      Left = 221
+      Top = 23
+      Width = 120
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'PRO_ST_ALTERNATIVO'
+      DataSource = Ds_Ord
+      ReadOnly = True
+      TabOrder = 4
+    end
+    object Ed_PRO_ST_DESCRICAO: TDBEdit
+      Left = 87
+      Top = 45
+      Width = 404
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'PRO_ST_DESCRICAO'
+      DataSource = Ds_Ord
+      ReadOnly = True
+      TabOrder = 5
+    end
+    object DBEdit2: TDBEdit
+      Left = 372
+      Top = 1
+      Width = 53
+      Height = 21
+      TabStop = False
+      Color = clSilver
+      DataField = 'UNI_ST_UNIDADE'
+      DataSource = Ds_Ord
+      ReadOnly = True
+      TabOrder = 2
+    end
+    object Gd_Consumo: TDBGrid
+      Left = 8
+      Top = 114
+      Width = 777
+      Height = 187
+      DataSource = Ds_Enc
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      TabOrder = 8
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Alignment = taRightJustify
+          Expanded = False
+          FieldName = 'pro_in_codigo'
+          ReadOnly = True
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Item'
+          Width = 50
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'pro_st_descricao'
+          ReadOnly = True
+          Title.Caption = 'Descri'#231#227'o'
+          Width = 195
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'pro_st_alternativo'
+          ReadOnly = True
+          Title.Caption = 'Alternativo'
+          Width = 80
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'mvs_st_loteforne'
+          ReadOnly = True
+          Title.Caption = 'Lote'
+          Width = 80
+          Visible = True
+        end
+        item
+          Alignment = taCenter
+          Expanded = False
+          FieldName = 'uni_st_unidade'
+          ReadOnly = True
+          Title.Alignment = taCenter
+          Title.Caption = 'U.M.'
+          Width = 40
+          Visible = True
+        end
+        item
+          Alignment = taRightJustify
+          Expanded = False
+          FieldName = 'mqd_re_qtdesaldokg'
+          ReadOnly = True
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Sdo. Empenhado'
+          Width = 95
+          Visible = True
+        end
+        item
+          Alignment = taRightJustify
+          Expanded = False
+          FieldName = 'mqd_re_qtdeconsumidakg'
+          ReadOnly = True
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Qtde.Requisitada'
+          Width = 95
+          Visible = True
+        end
+        item
+          Alignment = taRightJustify
+          Color = clGradientActiveCaption
+          Expanded = False
+          FieldName = 'mqd_re_devolver'
+          Title.Alignment = taRightJustify
+          Title.Caption = 'Qtde.Dev.Estoque'
+          Width = 95
+          Visible = True
+        end>
+    end
+  end
+  object Pn_Rodape: TPanel
+    Left = 0
+    Top = 373
+    Width = 794
+    Height = 33
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 2
+    ExplicitTop = 221
+    ExplicitWidth = 497
+    object Bo_Fechar: TBitBtn
+      Left = 710
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Fechar'
+      TabOrder = 0
+      OnClick = Bo_FecharClick
+    end
+  end
+  object Cl_Cmq: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 660
+    Top = 64
+  end
+  object Cl_Ord: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 708
+    Top = 16
+  end
+  object Ds_Ord: TDataSource
+    DataSet = Cl_Ord
+    Left = 744
+    Top = 15
+  end
+  object Cl_Pro: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 656
+    Top = 15
+  end
+  object Cl_Enc: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    BeforeInsert = Cl_EncBeforeInsert
+    BeforePost = Cl_EncBeforePost
+    BeforeDelete = Cl_EncBeforeDelete
+    Left = 708
+    Top = 64
+  end
+  object Ds_Enc: TDataSource
+    DataSet = Cl_Enc
+    Left = 744
+    Top = 63
+  end
+end

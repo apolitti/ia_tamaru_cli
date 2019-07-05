@@ -1,0 +1,373 @@
+object frmAvisoRecebimento: TfrmAvisoRecebimento
+  Left = 0
+  Top = 0
+  Caption = 'Aviso de Recebimento'
+  ClientHeight = 464
+  ClientWidth = 704
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Pn_Principal: TPanel
+    Left = 0
+    Top = 119
+    Width = 704
+    Height = 307
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 1
+    ExplicitTop = 35
+    ExplicitHeight = 391
+    object Pn_Principal1: TPanel
+      Left = 0
+      Top = 0
+      Width = 704
+      Height = 36
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 0
+      object Label2: TLabel
+        Left = 15
+        Top = 8
+        Width = 55
+        Height = 13
+        Caption = 'Fornecedor'
+      end
+      object Label3: TLabel
+        Left = 359
+        Top = 8
+        Width = 68
+        Height = 13
+        Caption = 'Data Emiss'#227'o:'
+      end
+      object Label4: TLabel
+        Left = 527
+        Top = 8
+        Width = 68
+        Height = 13
+        Caption = 'Data Entrada:'
+      end
+      object Ed_AGN_ST_FANTASIA: TDBEdit
+        Left = 76
+        Top = 4
+        Width = 277
+        Height = 21
+        TabStop = False
+        Color = cl3DLight
+        DataField = 'AGN_ST_FANTASIA'
+        DataSource = Ds_Avr
+        ReadOnly = True
+        TabOrder = 0
+      end
+      object Ed_AVR_DT_EMISSAONF: TDBEdit
+        Left = 432
+        Top = 4
+        Width = 81
+        Height = 21
+        TabStop = False
+        Color = cl3DLight
+        DataField = 'avr_dt_emissaonf'
+        DataSource = Ds_Avr
+        ReadOnly = True
+        TabOrder = 1
+      end
+      object Ed_AVR_DT_ENTRADANF: TDBEdit
+        Left = 600
+        Top = 4
+        Width = 81
+        Height = 21
+        TabStop = False
+        Color = cl3DLight
+        DataField = 'avr_dt_entradanf'
+        DataSource = Ds_Avr
+        ReadOnly = True
+        TabOrder = 2
+      end
+    end
+    object Gd_Avr: TDBGrid
+      Left = 0
+      Top = 36
+      Width = 704
+      Height = 271
+      Align = alClient
+      DataSource = Ds_Avr
+      Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      TabOrder = 1
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'IAR_IN_SEQUENCIA'
+          ReadOnly = True
+          Title.Caption = 'Seq.'
+          Width = 30
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PRO_IN_CODIGO'
+          ReadOnly = True
+          Title.Caption = 'Cod. Mega'
+          Width = 90
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PRO_ST_ALTERNATIVO'
+          ReadOnly = True
+          Title.Caption = 'Cod. Alternativo'
+          Width = 90
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PRO_ST_DESCRICAO'
+          ReadOnly = True
+          Title.Caption = 'Descri'#231#227'o'
+          Width = 300
+          Visible = True
+        end
+        item
+          Color = clGradientActiveCaption
+          Expanded = False
+          FieldName = 'IAR_RE_QTDCONTADA'
+          Title.Caption = 'Qtde Contada'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'UNI_ST_UNIDADE'
+          ReadOnly = True
+          Title.Caption = 'U.M.'
+          Width = 40
+          Visible = True
+        end>
+    end
+  end
+  object Pn_Topo: TPanel
+    Left = 0
+    Top = 0
+    Width = 704
+    Height = 119
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    object Pc_Filtro: TPageControl
+      Left = 0
+      Top = 0
+      Width = 704
+      Height = 119
+      ActivePage = Ts_Consulta
+      Align = alClient
+      TabOrder = 0
+      ExplicitHeight = 89
+      object Ts_Filtro: TTabSheet
+        Caption = 'Aviso'
+        ExplicitLeft = 212
+        ExplicitTop = 48
+        object Lb_CMAQ_IN_CODIGO: TLabel
+          Left = 15
+          Top = 39
+          Width = 52
+          Height = 13
+          Caption = 'Nota Fiscal'
+        end
+        object Label1: TLabel
+          Left = 211
+          Top = 39
+          Width = 112
+          Height = 13
+          Caption = 'Documento Fornecedor'
+        end
+        object Ed_AVR_ST_NOTA: TEdit
+          Left = 73
+          Top = 35
+          Width = 121
+          Height = 21
+          TabOrder = 0
+          OnKeyDown = Ed_AVR_ST_NOTAKeyDown
+        end
+        object Ed_AGN_ST_CGC: TEdit
+          Left = 327
+          Top = 35
+          Width = 121
+          Height = 21
+          TabOrder = 1
+          OnKeyDown = Ed_AGN_ST_CGCKeyDown
+        end
+        object Bo_Procurar: TBitBtn
+          Left = 461
+          Top = 33
+          Width = 75
+          Height = 25
+          Caption = 'Procurar'
+          TabOrder = 2
+          OnClick = Bo_ProcurarClick
+        end
+      end
+      object Ts_Consulta: TTabSheet
+        Caption = 'Consulta'
+        ImageIndex = 1
+        ExplicitLeft = 3
+        ExplicitTop = 22
+        ExplicitHeight = 61
+        object Gd_AvrCns: TDBGrid
+          Left = 0
+          Top = 0
+          Width = 664
+          Height = 91
+          Align = alClient
+          DataSource = Ds_AvrCns
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
+          OnDblClick = Gd_AvrCnsDblClick
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'AVR_ST_NOTA'
+              Title.Caption = 'Nota Fiscal'
+              Width = 80
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'AVR_DT_EMISSAONF'
+              Title.Alignment = taCenter
+              Title.Caption = 'Dt. Emiss'#227'o'
+              Width = 70
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'AVR_DT_ENTRADANF'
+              Title.Alignment = taCenter
+              Title.Caption = 'Dt.Entrada'
+              Width = 70
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'AGN_IN_CODIGO'
+              Title.Caption = 'Fornecedor'
+              Width = 80
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'AGN_ST_CGC'
+              Title.Caption = 'Documento'
+              Width = 120
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'AGN_ST_NOME'
+              Title.Caption = 'Nome'
+              Width = 400
+              Visible = True
+            end>
+        end
+        object Pn_AvrCns: TPanel
+          Left = 664
+          Top = 0
+          Width = 32
+          Height = 91
+          Align = alRight
+          TabOrder = 1
+          ExplicitHeight = 61
+          object Bo_AvrCns_Refresh: TBitBtn
+            AlignWithMargins = True
+            Left = 4
+            Top = 4
+            Width = 24
+            Height = 25
+            Align = alTop
+            TabOrder = 0
+            OnClick = Bo_AvrCns_RefreshClick
+            ExplicitLeft = 16
+            ExplicitTop = 24
+            ExplicitWidth = 75
+          end
+        end
+      end
+    end
+  end
+  object Panel4: TPanel
+    Left = 0
+    Top = 426
+    Width = 704
+    Height = 38
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 2
+    DesignSize = (
+      704
+      38)
+    object Bo_Confirmar: TBitBtn
+      Left = 543
+      Top = 6
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Confirmar'
+      TabOrder = 0
+      OnClick = Bo_ConfirmarClick
+    end
+    object Bo_Fechar: TBitBtn
+      Left = 624
+      Top = 6
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Fechar'
+      TabOrder = 1
+      OnClick = Bo_FecharClick
+    end
+  end
+  object Cl_Avr: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'IAR_IN_SEQUENCIA'
+    Params = <>
+    BeforeInsert = Cl_AvrBeforeInsert
+    BeforeDelete = Cl_AvrBeforeDelete
+    Left = 192
+    Top = 192
+  end
+  object Ds_Avr: TDataSource
+    DataSet = Cl_Avr
+    Left = 192
+    Top = 240
+  end
+  object Cl_AvrCns: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    BeforeInsert = Cl_AvrCnsBeforeInsert
+    BeforeDelete = Cl_AvrCnsBeforeDelete
+    Left = 344
+    Top = 240
+  end
+  object Ds_AvrCns: TDataSource
+    DataSet = Cl_AvrCns
+    Left = 344
+    Top = 288
+  end
+end

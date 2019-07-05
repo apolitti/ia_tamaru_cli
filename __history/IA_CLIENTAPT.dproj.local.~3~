@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2019/03/01 16:42:10.000.961,=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2019/03/01 16:42:36.000.309,=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2019/03/01 16:43:21.000.051,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\uDM.dfm=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit2.dfm</Transaction>
+    <Transaction>2019/03/01 16:43:21.000.051,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\uDM.pas=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>2019/03/01 16:43:42.000.377,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmSetupMaquina.dfm=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2019/03/01 16:43:42.000.377,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmSetupMaquina.pas=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2019/03/01 16:43:51.000.564,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\IA_CLIENTAPT.dproj=C:\Users\Usuario\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2019/03/08 08:49:58.000.373,=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit2.pas</Transaction>
+    <Transaction>2019/03/08 13:50:15.000.246,=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmAvisoRecebimento.pas</Transaction>
+    <Transaction>2019/03/08 14:25:22.000.253,=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas</Transaction>
+    <Transaction>2019/03/08 14:25:49.000.683,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmMenu.dfm=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.dfm</Transaction>
+    <Transaction>2019/03/08 14:25:49.000.683,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmMenu.pas=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas</Transaction>
+    <Transaction>2019/03/15 08:31:35.000.095,=C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas</Transaction>
+    <Transaction>2019/03/15 08:32:33.000.732,C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas=C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmEmpenhoMaterial.pas</Transaction>
+    <Transaction>2019/03/15 08:32:33.000.732,C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.dfm=C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmEmpenhoMaterial.dfm</Transaction>
+    <Transaction>2019/03/22 11:21:56.000.589,=C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas</Transaction>
+    <Transaction>2019/03/22 11:22:32.000.762,C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas=C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmApontamentoProducao.pas</Transaction>
+    <Transaction>2019/03/22 11:22:32.000.762,C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.dfm=C:\Temp\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmApontamentoProducao.dfm</Transaction>
+    <Transaction>2019/04/10 11:19:30.000.570,=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmEncerramentoProducao.pas</Transaction>
+    <Transaction>2019/04/15 08:54:12.300,=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas</Transaction>
+    <Transaction>2019/04/15 08:54:36.409,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmConsumoMaterial.pas=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.pas</Transaction>
+    <Transaction>2019/04/15 08:54:36.409,\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\ufrmConsumoMaterial.dfm=\\10.0.9.1\mega$\CUSTOMIZAÇÕES\Aplicações\Delpak\Apontamento Eletronico - WebService\IA_CLIENTAPT\Unit1.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

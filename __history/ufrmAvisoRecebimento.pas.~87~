@@ -1,0 +1,246 @@
+unit ufrmAvisoRecebimento;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Buttons, Datasnap.DBClient, IdHTTP, System.JSON, IdURI,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, HTTPApp, Vcl.Mask,
+  Vcl.DBCtrls;
+
+type
+  TfrmAvisoRecebimento = class(TForm)
+    Cl_Avr: TClientDataSet;
+    Ds_Avr: TDataSource;
+    Panel3: TPanel;
+    Panel1: TPanel;
+    Lb_CMAQ_IN_CODIGO: TLabel;
+    Ed_AVR_ST_NOTA: TEdit;
+    Bevel1: TBevel;
+    Panel2: TPanel;
+    Bevel2: TBevel;
+    Gd_Avr: TDBGrid;
+    Panel4: TPanel;
+    Bo_Confirmar: TBitBtn;
+    Bo_Fechar: TBitBtn;
+    Ed_AGN_ST_CGC: TEdit;
+    Bo_Procurar: TBitBtn;
+    Label1: TLabel;
+    Ed_AGN_ST_FANTASIA: TDBEdit;
+    Label2: TLabel;
+    Ed_AVR_DT_EMISSAONF: TDBEdit;
+    Label3: TLabel;
+    Label4: TLabel;
+    Ed_AVR_DT_ENTRADANF: TDBEdit;
+    procedure Bo_ProcurarClick(Sender: TObject);
+    procedure Bo_ConfirmarClick(Sender: TObject);
+    procedure Bo_FecharClick(Sender: TObject);
+    procedure Cl_AvrAfterScroll(DataSet: TDataSet);
+    procedure Ed_AVR_ST_NOTAKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Ed_AGN_ST_CGCKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    procedure BuscaAvisoRecebimento(
+                p_fil_in_codigo,
+                p_avr_st_nota,
+                p_agn_st_cgc: String
+              );
+    procedure SalvarAvisoRecebimento(
+      stringStream : TStringStream
+    );
+  public
+    { Public declarations }
+  end;
+
+var
+  frmAvisoRecebimento: TfrmAvisoRecebimento;
+
+implementation
+
+{$R *.dfm}
+
+uses uDM;
+
+procedure TfrmAvisoRecebimento.Bo_FecharClick(Sender: TObject);
+begin
+
+  if ((Cl_Avr.State = dsInsert) or (Cl_Avr.State = dsEdit)) then
+  begin
+    if Application.MessageBox(pChar('Deseja sair sem salvar as alterações?'), pChar(Application.Title), MB_ICONQUESTION + MB_YESNO) = IDNO then
+    begin
+      Exit;
+    end;
+  end;
+
+  Close;
+end;
+
+procedure TfrmAvisoRecebimento.Bo_ProcurarClick(Sender: TObject);
+begin
+  BuscaAvisoRecebimento('3', Ed_AVR_ST_NOTA.Text, Ed_AGN_ST_CGC.Text);
+end;
+
+procedure TfrmAvisoRecebimento.Bo_ConfirmarClick(Sender: TObject);
+var
+  stringStream : TStringStream;
+begin
+
+  if Application.MessageBox(pChar('Deseja realmente confirmar os registros?'), pChar(Application.Title), MB_ICONQUESTION + MB_YESNO) = IDNO Then
+  begin
+    Exit;
+  end;
+
+  Cl_Avr.Last;
+  Cl_Avr.First;
+  Cl_Avr.DisableControls;
+
+  try
+
+    stringStream := TStringStream.Create;
+    stringStream.WriteString('[');
+
+    while not Cl_Avr.Eof do
+    begin
+
+      stringStream.WriteString('  {');
+      stringStream.WriteString('    "p_fil_in_codigo" : "' + IntToStr(3) + '",');
+      stringStream.WriteString('	  "p_avr_in_codigo" : "' + IntToStr(Cl_Avr.FieldByName('avr_in_codigo').AsInteger) + '",');
+      stringStream.WriteString('	  "p_iar_in_sequencia" : "' + IntToStr(Cl_Avr.FieldByName('iar_in_sequencia').AsInteger) + '",');
+      stringStream.WriteString('	  "p_iar_re_qtdcontada" : "' + FloatToStr(Cl_Avr.FieldByName('iar_re_qtdcontada').AsFloat) + '"');
+      stringStream.WriteString('  }');
+
+      Cl_Avr.Next;
+
+      if not Cl_Avr.Eof then
+      begin
+        stringStream.WriteString(',');
+      end;
+
+    end;
+
+    stringStream.WriteString(']');
+
+    try
+
+      SalvarAvisoRecebimento(stringStream);
+
+      Application.MessageBox(pChar('Registros confirmados com sucesso!'), pChar(Application.Title), MB_ICONINFORMATION + MB_OK);
+    except
+      on e: exception do
+      begin
+        Screen.Cursor := crDefault;
+        raise Exception.Create(e.Message);
+      end;
+    end;
+
+  finally
+    Cl_Avr.First;
+    Cl_Avr.EnableControls;
+    Bo_ProcurarClick(Bo_Procurar);
+  end;
+
+end;
+
+procedure TfrmAvisoRecebimento.BuscaAvisoRecebimento(
+  p_fil_in_codigo,
+  p_avr_st_nota,
+  p_agn_st_cgc: String
+);
+var
+  str : string;
+  js  : TJSONArray;
+  url : String;
+  fornecedor : String;
+begin
+
+  fornecedor := HTTPEncode(p_agn_st_cgc);
+
+  url := wURL + 'f_aviso_itens_lst/' + p_fil_in_codigo + '/' + p_avr_st_nota + '/' + fornecedor;
+
+  Str := DM.IdHTTP1.get(url);
+
+  DM.JsonToDataset(Cl_Avr, Str);
+
+  if Cl_Avr.IsEmpty then
+  begin
+    Ed_AVR_ST_NOTA.SetFocus;
+    Ed_AVR_ST_NOTA.SelectAll;
+    raise Exception.Create('Nota Fiscal / Fornecedor não localizados!');
+  end;
+
+
+end;
+
+procedure TfrmAvisoRecebimento.Cl_AvrAfterScroll(DataSet: TDataSet);
+begin
+  if DataSet.IsEmpty then
+  begin
+    Exit;
+  end;
+
+
+end;
+
+procedure TfrmAvisoRecebimento.Ed_AGN_ST_CGCKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+
+end;
+
+procedure TfrmAvisoRecebimento.Ed_AVR_ST_NOTAKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+
+end;
+
+procedure TfrmAvisoRecebimento.SalvarAvisoRecebimento(
+  stringStream : TStringStream
+);
+var
+  str : string;
+  js  : TJSONArray;
+  url : String;
+  fornecedor : String;
+begin
+
+  try
+
+    Screen.Cursor := crSQLWait;
+
+    url := wURL + 'p_aviso_itens_upd';
+
+    try
+      DM.IdHTTP1.Put(url, stringStream);
+      //Result := True;
+    except
+      on e: exception do
+      begin
+        //Result        := False;
+        Screen.Cursor := crDefault;
+        raise Exception.Create(e.Message);
+      end;
+    end;
+
+  finally
+
+    Screen.Cursor := crDefault;
+
+  end;
+
+
+end;
+
+
+end.

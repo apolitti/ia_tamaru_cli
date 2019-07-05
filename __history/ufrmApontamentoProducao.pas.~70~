@@ -1,0 +1,422 @@
+unit ufrmApontamentoProducao;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient,
+  Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls, Math;
+
+type
+  TfrmApontamentoProducao = class(TForm)
+    Pn_Topo: TPanel;
+    Lb_CMAQ_IN_CODIGO: TLabel;
+    Ed_CMAQ_IN_CODIGO: TEdit;
+    Bo_OK: TBitBtn;
+    Pn_Principal: TPanel;
+    Pn_Rodape: TPanel;
+    Lb_ORD_IN_CODIGO: TLabel;
+    Lb_APO_RE_QUANTIDADE: TLabel;
+    Ed_APO_RE_QUANTIDADE: TEdit;
+    Cl_Cmq: TClientDataSet;
+    Cl_Ord: TClientDataSet;
+    Bo_Fechar: TBitBtn;
+    Bo_Confirmar: TBitBtn;
+    Lb_PLF_RE_QUANTIDADEORI: TLabel;
+    Lb_PLF_RE_QUANTIDADEPRD: TLabel;
+    Lb_PLF_RE_QUANTIDADEPRDHRATU: TLabel;
+    Lb_PLF_RE_QUANTIDADEPRDHRANT: TLabel;
+    Lb_PLF_RE_TEMPOPADRAOUN_SEG: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Ds_Ord: TDataSource;
+    Ed_ORD_IN_CODIGO: TDBEdit;
+    Ed_PLF_RE_QUANTIDADEORI: TDBEdit;
+    Ed_PLF_RE_QUANTIDADEPRD: TDBEdit;
+    Ed_PLF_RE_QUANTIDADEPRDHRATU: TDBEdit;
+    Ed_PLF_RE_QUANTIDADEPRDHRANT: TDBEdit;
+    Ed_PLF_RE_TEMPOPADRAOUN_SEG: TDBEdit;
+    Lb_PLF_RE_QUANTIDADESUB: TLabel;
+    Ed_PLF_RE_QUANTIDADESUB: TDBEdit;
+    Lb_PRO_IN_CODIGO: TLabel;
+    Ed_PRO_IN_CODIGO: TDBEdit;
+    Lb_PRO_ST_ALTERNATIVO: TLabel;
+    Ed_PRO_ST_ALTERNATIVO: TDBEdit;
+    Lb_PRO_ST_DESCRICAO: TLabel;
+    Ed_PRO_ST_DESCRICAO: TDBEdit;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    Cl_Etiq: TClientDataSet;
+    Cl_Imp: TClientDataSet;
+    Cl_Pro: TClientDataSet;
+    procedure Ed_CMAQ_IN_CODIGOKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Ed_APO_RE_QUANTIDADEKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bo_OKClick(Sender: TObject);
+    procedure Bo_FecharClick(Sender: TObject);
+    procedure Ed_CMAQ_IN_CODIGOChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Bo_ConfirmarClick(Sender: TObject);
+    procedure Ed_APO_RE_QUANTIDADEExit(Sender: TObject);
+    procedure Ed_CMAQ_IN_CODIGOExit(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmApontamentoProducao: TfrmApontamentoProducao;
+
+implementation
+
+{$R *.dfm}
+
+uses uDM;
+
+procedure TfrmApontamentoProducao.Bo_ConfirmarClick(Sender: TObject);
+var
+  iCMAQ_IN_CODIGO    : Integer;
+  rAPO_RE_QUANTIDADE : Extended;
+  sAPO_IN_SEQUENCIA  : string;
+  v_copia            : string;
+  str                : TStringList;
+begin
+
+  if (Cl_Cmq.FieldByName('cmaq_ch_apontaproducaopor').AsString = 'Q') then
+  begin
+
+    rAPO_RE_QUANTIDADE := StrToFloat(Ed_APO_RE_QUANTIDADE.Text);
+
+    if rAPO_RE_QUANTIDADE <= 0 then
+    begin
+      Ed_APO_RE_QUANTIDADE.SetFocus;
+      Ed_APO_RE_QUANTIDADE.SelectAll;
+      raise Exception.Create('Quantidade inválida!');
+    end;
+
+  end
+  else
+  begin
+
+    if (Cl_Ord.FieldByName('pcb_st_codigobarra').AsString <> Ed_APO_RE_QUANTIDADE.Text) then
+    begin
+      Ed_APO_RE_QUANTIDADE.SetFocus;
+      Ed_APO_RE_QUANTIDADE.SelectAll;
+      raise Exception.Create('EAN inválido!');
+    end;
+
+    rAPO_RE_QUANTIDADE := 1;
+
+  end;
+
+  try
+
+    Screen.Cursor := crSQLWait;
+
+    try
+      DM.p_apontarproducao_exe(wFIL_IN_CODIGO,StrToInt(Ed_CMAQ_IN_CODIGO.Text),Cl_Ord.FieldByName('ord_in_codigo').AsInteger,rAPO_RE_QUANTIDADE,sAPO_IN_SEQUENCIA);
+      ShowMessage('Gerado apontamento [' + sAPO_IN_SEQUENCIA + ']!');
+    except
+      on e: exception do
+      begin
+        raise Exception.Create(e.Message);
+      end;
+    end;
+
+    {if (Cl_Ord.FieldByName('etiq_ch_momentoimpauto').AsString <> 'A')
+    then
+    begin
+      repeat
+
+        v_copia := '1';
+
+        if InputQuery('Etiqueta', 'Número de cópias: ',  v_copia) then
+        begin
+
+          if DM.isInteger(v_copia) then
+          begin
+
+            DM.p_impressora_ma_lst(Cl_Imp, Cl_Ord.FieldByName('FIL_IN_CODIGO').AsInteger, Cl_Cmq.FieldByName('cmaq_in_codigo').AsInteger, Cl_Ord.FieldByName('etiq_in_id').AsInteger);
+
+            if Cl_Imp.IsEmpty = True then
+            begin
+              raise Exception.Create('Impressora não definida!'
+                                    + chr(13) + 'Máquina: ' + Cl_Ord.FieldByName('FIL_IN_CODIGO').AsString
+                                    + chr(13) + 'Modelo de Etiqueta: ' + Cl_Ord.FieldByName('etiq_in_id').AsString
+                                    );
+            end;
+
+            str := TStringList.Create;
+
+            DM.p_etiqueta_processo_lst();
+
+            DM.p_etiqueta_produtoacabado_lst( Cl_Ord.FieldByName('etiq_in_id').AsString
+                                            , Cl_Ord.FieldByName('pro_st_descricao').AsString
+                                            , Cl_Cmq.FieldByName('opd_st_etiq_inspetor').AsString
+                                            , Cl_Cmq.FieldByName('opd_st_etiq_embalador').AsString
+                                            , Cl_Cmq.FieldByName('opd_st_etiq_operador').AsString
+                                            , FormatDateTime('dd/mm/yyyy', now)
+                                            , FormatFloat('00000000', Cl_Ord.FieldByName('PRO_IN_CODIGO').AsInteger) + FormatFloat('0000000', Cl_Ord.FieldByName('ORD_IN_CODIGO').AsInteger)
+                                            , Cl_Ord.FieldByName('pcb_st_codigobarra').AsString
+                                            , Cl_Ord.FieldByName('plf_re_quantidadeori').AsString
+                                            , Cl_Ord.FieldByName('pro_st_tampa').AsString
+                                            , Cl_Ord.FieldByName('pro_st_cor').AsString
+                                            , v_copia
+                                            , str
+                                            );
+
+
+            str.SaveToFile(Cl_Imp.FieldByName('impr_st_nome').AsString,TEncoding.UTF8);
+            //str.SaveToFile('c:\temp\teste.txt',TEncoding.UTF8);
+            str.Free;
+
+          end;
+        end;
+      until DM.isInteger(v_copia);
+
+    end;}
+
+  finally
+
+    Screen.Cursor := crDefault;
+
+  end;
+
+  iCMAQ_IN_CODIGO := StrToInt(Ed_CMAQ_IN_CODIGO.Text);
+  Bo_FecharClick(Bo_Fechar);
+  Ed_CMAQ_IN_CODIGO.Text := IntToStr(iCMAQ_IN_CODIGO);
+  Ed_CMAQ_IN_CODIGO.SetFocus;
+  Perform(Wm_NextDlgCtl, 0, 0);
+
+end;
+
+procedure TfrmApontamentoProducao.Bo_FecharClick(Sender: TObject);
+begin
+
+  if Pn_Topo.Enabled = False then
+  begin
+    Ed_CMAQ_IN_CODIGO.Clear;
+    Pn_Topo.Enabled      := True;
+    Pn_Principal.Visible := False;
+    Ed_CMAQ_IN_CODIGO.SetFocus;
+  end
+  else
+  begin
+    Close;
+  end;
+
+end;
+
+procedure TfrmApontamentoProducao.Bo_OKClick(Sender: TObject);
+var
+  v_copia : string;
+  str     : TStringList;
+  prd_hr  : Real;
+begin
+
+  if (Ed_CMAQ_IN_CODIGO.Text = '') then
+  begin
+    Exit;
+  end;
+
+  DM.p_maquina_lst(Cl_Cmq,wFIL_IN_CODIGO,StrToInt(Ed_CMAQ_IN_CODIGO.Text));
+
+  if (Cl_Cmq.IsEmpty = True) then
+  begin
+    Ed_CMAQ_IN_CODIGO.SetFocus;
+    Ed_CMAQ_IN_CODIGO.SelectAll;
+    raise Exception.Create('Máquina não localizada!');
+  end;
+
+  if Cl_Cmq.FieldByName('ord_in_codigo_setup').AsString = '' then
+  begin
+    Ed_CMAQ_IN_CODIGO.SetFocus;
+    Ed_CMAQ_IN_CODIGO.SelectAll;
+    raise Exception.Create('Ordem não definida no setup da máquina!');
+  end;
+
+  DM.p_ordem_lst(Cl_Ord,wFIL_IN_CODIGO,Cl_Cmq.FieldByName('ord_in_codigo_setup').AsInteger);
+
+  if (Cl_Ord.FieldByName('ord_st_situacao').AsString <> 'AB') then
+  begin
+    raise Exception.Create('Ordem [' + Cl_Cmq.FieldByName('ord_in_codigo_setup').AsString + '] encontra-se [' + Cl_Ord.FieldByName('ord_st_situacao_dsc').AsString + ']!');
+  end;
+
+  Lb_APO_RE_QUANTIDADE.Caption := 'Informe o código EAN do item produzido';
+  Ed_APO_RE_QUANTIDADE.Clear;
+
+  if (Cl_Cmq.FieldByName('cmaq_ch_apontaproducaopor').AsString = 'Q') then
+  begin
+    Lb_APO_RE_QUANTIDADE.Caption := 'Informe a quantidade produzida';
+    Ed_APO_RE_QUANTIDADE.Text    := '0';
+  end;
+
+  if (Cl_Ord.FieldByName('etiq_ch_momentoimpauto').AsString = 'A') then
+  begin
+
+    if not(
+            (Cl_Ord.FieldByName('etiq_in_id').AsInteger = 3)
+            or
+            (Cl_Ord.FieldByName('etiq_in_id').AsInteger = 4)
+          )
+    then
+    begin
+      raise Exception.Create('Modelo de etiqueta [' + Cl_Ord.FieldByName('etiq_in_id').AsString + '] não pode ser utilizado na pré-impressão. Utilize os modelos 3 ou 4.');
+    end;
+
+    DM.p_impressora_ma_lst(Cl_Imp, Cl_Ord.FieldByName('FIL_IN_CODIGO').AsInteger, Cl_Cmq.FieldByName('cmaq_in_codigo').AsInteger, Cl_Ord.FieldByName('etiq_in_id').AsInteger);
+
+    if Cl_Imp.IsEmpty = True then
+    begin
+      raise Exception.Create('Impressora não definida para pré-impressão de etiqueta!'
+                            + chr(13) + 'Máquina: ' + Cl_Ord.FieldByName('FIL_IN_CODIGO').AsString
+                            + chr(13) + 'Modelo de Etiqueta: ' + Cl_Ord.FieldByName('etiq_in_id').AsString
+                            );
+    end;
+
+    repeat
+      v_copia := '1';
+      if InputQuery('Etiqueta', 'Número de cópias: ',  v_copia) then
+      begin
+        if DM.isInteger(v_copia) then
+        begin
+
+          str := TStringList.Create;
+
+          DM.p_etiqueta_produtoacabado_lst( Cl_Ord.FieldByName('etiq_in_id').AsString
+                                          , Cl_Ord.FieldByName('pro_st_descricao').AsString
+                                          , Cl_Cmq.FieldByName('opd_st_etiq_inspetor').AsString
+                                          , Cl_Cmq.FieldByName('opd_st_etiq_embalador').AsString
+                                          , Cl_Cmq.FieldByName('opd_st_etiq_operador').AsString
+                                          , FormatDateTime('dd/mm/yyyy', now)
+                                          , FormatFloat('00000000', Cl_Ord.FieldByName('PRO_IN_CODIGO').AsInteger) + FormatFloat('0000000', Cl_Ord.FieldByName('ORD_IN_CODIGO').AsInteger)
+                                          , Cl_Ord.FieldByName('pcb_st_codigobarra').AsString
+                                          , Cl_Ord.FieldByName('plf_re_quantidadeori').AsString
+                                          , Cl_Ord.FieldByName('pro_st_tampa').AsString
+                                          , Cl_Ord.FieldByName('pro_st_cor').AsString
+                                          , v_copia
+                                          , str
+                                          );
+
+
+          str.SaveToFile(Cl_Imp.FieldByName('impr_st_nome').AsString,TEncoding.UTF8);
+          //str.SaveToFile('c:\temp\teste.txt',TEncoding.UTF8);
+          str.Free;
+
+        end;
+      end;
+    until DM.isInteger(v_copia);
+  end;
+
+  Ed_PLF_RE_QUANTIDADEPRDHRANT.Font.Color := clWhite;
+  Ed_PLF_RE_QUANTIDADEPRDHRANT.Color      := clGreen;
+
+  prd_hr := 0;
+  if (Cl_Ord.FieldByName('PLF_RE_TEMPOPADRAOUN_SEG').AsFloat > 0) then
+  begin
+    prd_hr := 3600 / Cl_Ord.FieldByName('PLF_RE_TEMPOPADRAOUN_SEG').AsFloat;
+  end;
+
+  if Cl_Ord.FieldByName('PLF_RE_QUANTIDADEPRDHRANT').AsFloat < prd_hr then
+  begin
+    Ed_PLF_RE_QUANTIDADEPRDHRANT.Font.Color := clWhite;
+    Ed_PLF_RE_QUANTIDADEPRDHRANT.Color      := clRed;
+  end;
+
+  Pn_Topo.Enabled       := False;
+  Pn_Principal.Visible  := True;
+
+  Ed_APO_RE_QUANTIDADE.SetFocus;
+  Ed_APO_RE_QUANTIDADE.SelectAll;
+
+end;
+
+procedure TfrmApontamentoProducao.Ed_APO_RE_QUANTIDADEExit(Sender: TObject);
+var
+  rAPO_RE_QUANTIDADE : Extended;
+begin
+
+  Ed_APO_RE_QUANTIDADE.Text := Trim(Ed_APO_RE_QUANTIDADE.Text);
+
+  if (Cl_Cmq.FieldByName('cmaq_ch_apontaproducaopor').AsString = 'Q') then
+  begin
+
+    if not(TryStrToFloat(Ed_APO_RE_QUANTIDADE.Text,rAPO_RE_QUANTIDADE)) then
+    begin
+      rAPO_RE_QUANTIDADE := 0;
+    end;
+
+    rAPO_RE_QUANTIDADE := RoundTo(rAPO_RE_QUANTIDADE,Cl_Ord.FieldByName('pun_in_decimaisqtde').AsInteger*-1);
+
+    Ed_APO_RE_QUANTIDADE.Text := FloatToStr(rAPO_RE_QUANTIDADE);
+
+  end;
+
+  if (
+       ((Cl_Cmq.FieldByName('cmaq_ch_apontaproducaopor').AsString = 'Q') and (StrToFloat(Ed_APO_RE_QUANTIDADE.Text) > 0))
+       or
+       ((Cl_Cmq.FieldByName('cmaq_ch_apontaproducaopor').AsString <> 'Q') and (Ed_APO_RE_QUANTIDADE.Text <> ''))
+     )
+  then
+  begin
+    Bo_ConfirmarClick(Bo_Confirmar);
+  end;
+
+end;
+
+procedure TfrmApontamentoProducao.Ed_APO_RE_QUANTIDADEKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+end;
+
+procedure TfrmApontamentoProducao.Ed_CMAQ_IN_CODIGOChange(Sender: TObject);
+begin
+  Cl_Cmq.Close;
+  Cl_Ord.Close;
+end;
+
+procedure TfrmApontamentoProducao.Ed_CMAQ_IN_CODIGOExit(Sender: TObject);
+var
+  icmaq_in_codigo : Integer;
+begin
+
+  Ed_CMAQ_IN_CODIGO.Text := Trim(Ed_CMAQ_IN_CODIGO.Text);
+
+  if Ed_CMAQ_IN_CODIGO.Text <> '' then
+  begin
+
+    if not(TryStrToInt(Ed_CMAQ_IN_CODIGO.Text,icmaq_in_codigo)) then
+    begin
+      Ed_CMAQ_IN_CODIGO.SelectAll;
+      raise Exception.Create('Máquina inválida!');
+    end;
+
+    Bo_OKClick(Sender);
+
+  end;
+
+end;
+
+procedure TfrmApontamentoProducao.Ed_CMAQ_IN_CODIGOKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN Then
+  begin
+    Perform(Wm_NextDlgCtl, 0, 0);
+  end;
+end;
+
+procedure TfrmApontamentoProducao.FormCreate(Sender: TObject);
+begin
+  Pn_Principal.Visible := False;
+end;
+
+end.

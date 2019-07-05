@@ -1,0 +1,475 @@
+object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
+  Left = 0
+  Top = 0
+  Caption = 'Ordem > Operador > Apontamentos'
+  ClientHeight = 519
+  ClientWidth = 776
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poMainFormCenter
+  Visible = True
+  OnClose = FormClose
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label8: TLabel
+    Left = 209
+    Top = 67
+    Width = 74
+    Height = 13
+    Caption = 'C'#243'digo Produto'
+  end
+  object GroupBox1: TGroupBox
+    Left = 0
+    Top = 0
+    Width = 776
+    Height = 275
+    Align = alTop
+    Caption = '  Dados da Ordem  '
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    object Label7: TLabel
+      Left = 18
+      Top = 19
+      Width = 80
+      Height = 13
+      Caption = 'C'#243'd. Operador'
+    end
+    object Label1: TLabel
+      Left = 106
+      Top = 19
+      Width = 53
+      Height = 13
+      Caption = 'Operador'
+    end
+    object Label2: TLabel
+      Left = 18
+      Top = 70
+      Width = 79
+      Height = 13
+      Caption = 'C'#243'digo Ordem'
+    end
+    object Label3: TLabel
+      Left = 18
+      Top = 121
+      Width = 72
+      Height = 13
+      Caption = 'C'#243'd. Produto'
+    end
+    object Label5: TLabel
+      Left = 106
+      Top = 213
+      Width = 54
+      Height = 13
+      Caption = 'Opera'#231#227'o'
+    end
+    object Label9: TLabel
+      Left = 106
+      Top = 121
+      Width = 91
+      Height = 13
+      Caption = 'C'#243'd. Alternativo'
+    end
+    object Label10: TLabel
+      Left = 106
+      Top = 70
+      Width = 91
+      Height = 13
+      Caption = 'C'#243'd. Alternativo'
+    end
+    object Label11: TLabel
+      Left = 314
+      Top = 70
+      Width = 105
+      Height = 13
+      Caption = 'Data Recebimento'
+    end
+    object Label12: TLabel
+      Left = 18
+      Top = 213
+      Width = 81
+      Height = 13
+      Caption = 'Seq. Opera'#231#227'o'
+    end
+    object Label13: TLabel
+      Left = 406
+      Top = 213
+      Width = 108
+      Height = 13
+      Caption = 'Centro de Trabalho'
+    end
+    object edOPD_ST_ALTERNATIVO: TEdit
+      Left = 18
+      Top = 36
+      Width = 82
+      Height = 32
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      OnExit = edOPD_ST_ALTERNATIVOExit
+    end
+    object edOPD_ST_DESCRICAO: TEdit
+      Left = 106
+      Top = 36
+      Width = 348
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+    end
+    object edORD_IN_CODIGO: TEdit
+      Left = 18
+      Top = 85
+      Width = 82
+      Height = 32
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnExit = edORD_IN_CODIGOExit
+    end
+    object edPRO_IN_CODIGO: TEdit
+      Left = 18
+      Top = 138
+      Width = 82
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 3
+    end
+    object edPRO_ST_DESCRICAO: TEdit
+      Left = 18
+      Top = 176
+      Width = 743
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 4
+    end
+    object edOPR_IN_CODIGO: TEdit
+      Left = 106
+      Top = 231
+      Width = 74
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 5
+    end
+    object edOPR_ST_OPERACAO: TEdit
+      Left = 186
+      Top = 231
+      Width = 186
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 6
+    end
+    object edPRO_ST_ALTERNATIVO: TEdit
+      Left = 106
+      Top = 138
+      Width = 200
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 7
+    end
+    object edORD_ST_ALTERNATIVO: TEdit
+      Left = 106
+      Top = 85
+      Width = 200
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 8
+    end
+    object edORD_DT_RECEBIMENTO: TEdit
+      Left = 314
+      Top = 85
+      Width = 140
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 9
+    end
+    object edPLF_IN_SQOPERACAO: TEdit
+      Left = 18
+      Top = 231
+      Width = 82
+      Height = 32
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 10
+      OnExit = edPLF_IN_SQOPERACAOExit
+    end
+    object edMAQ_IN_CODIGO: TEdit
+      Left = 406
+      Top = 232
+      Width = 56
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 11
+    end
+    object edMAQ_ST_NOME: TEdit
+      Left = 468
+      Top = 231
+      Width = 293
+      Height = 32
+      TabStop = False
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 12
+    end
+  end
+  object GroupBox2: TGroupBox
+    Left = 0
+    Top = 275
+    Width = 776
+    Height = 207
+    Align = alClient
+    Caption = '  Apontamentos  '
+    TabOrder = 1
+    object gdApontamentos: TDBGrid
+      Left = 2
+      Top = 15
+      Width = 772
+      Height = 190
+      Align = alClient
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+      ParentFont = False
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'APT_DT_APONTAMENTO'
+          Title.Caption = 'Data Abertura'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'APT_DT_ENCERRAMENTO'
+          Title.Caption = 'Data Encerramento'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'APT_RE_QUANTIDADE'
+          Title.Caption = 'Qtde. Produzida'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'APT_RE_QUANTIDADEREF'
+          Title.Caption = 'Qtde. Refugada'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'APT_REF_IN_CODIGO'
+          Title.Caption = 'Motivo Refugo'
+          Width = 200
+          Visible = True
+        end>
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 482
+    Width = 776
+    Height = 37
+    Align = alBottom
+    TabOrder = 2
+    object Button1: TButton
+      Left = 13
+      Top = 6
+      Width = 100
+      Height = 25
+      Caption = 'Apontar'
+      TabOrder = 0
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Left = 133
+      Top = 6
+      Width = 100
+      Height = 25
+      Caption = 'Encerrar'
+      TabOrder = 1
+    end
+    object Button3: TButton
+      Left = 253
+      Top = 6
+      Width = 100
+      Height = 25
+      Caption = 'Excluir'
+      TabOrder = 2
+    end
+  end
+  object cdsApontamentos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 584
+    Top = 200
+  end
+  object dsApontamentos: TDataSource
+    DataSet = cdsApontamentos
+    Left = 584
+    Top = 248
+  end
+end

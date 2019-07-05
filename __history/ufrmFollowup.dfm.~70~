@@ -1,0 +1,217 @@
+object frmFollowup: TfrmFollowup
+  Left = 0
+  Top = 0
+  Align = alClient
+  Caption = 'Followup'
+  ClientHeight = 498
+  ClientWidth = 752
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsMDIForm
+  OldCreateOrder = False
+  Visible = True
+  WindowState = wsMaximized
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pcPrincipal: TPageControl
+    Left = 0
+    Top = 0
+    Width = 752
+    Height = 498
+    ActivePage = tsDados
+    Align = alClient
+    TabOrder = 0
+    object tsFiltro: TTabSheet
+      Caption = 'Filtro'
+      object gbParametro: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 744
+        Height = 470
+        Align = alClient
+        Caption = '  Parametros  '
+        TabOrder = 0
+        object Label1: TLabel
+          Left = 16
+          Top = 27
+          Width = 64
+          Height = 13
+          Caption = 'Organiza'#231#227'o:'
+        end
+        object Label2: TLabel
+          Left = 44
+          Top = 54
+          Width = 36
+          Height = 13
+          Caption = 'Ordem:'
+        end
+        object Label3: TLabel
+          Left = 212
+          Top = 54
+          Width = 16
+          Height = 13
+          Caption = 'at'#233
+        end
+        object Label4: TLabel
+          Left = 36
+          Top = 81
+          Width = 44
+          Height = 13
+          Caption = 'Maquina:'
+        end
+        object Label5: TLabel
+          Left = 212
+          Top = 81
+          Width = 16
+          Height = 13
+          Caption = 'at'#233
+        end
+        object Label6: TLabel
+          Left = 9
+          Top = 108
+          Width = 71
+          Height = 13
+          Caption = 'Limite p/ Maq.:'
+        end
+        object edOrgInCodigo: TEdit
+          Left = 85
+          Top = 24
+          Width = 121
+          Height = 21
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 0
+        end
+        object edOrdInCodigoI: TEdit
+          Left = 85
+          Top = 51
+          Width = 121
+          Height = 21
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 1
+        end
+        object edOrdInCodigoF: TEdit
+          Left = 235
+          Top = 51
+          Width = 121
+          Height = 21
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 2
+        end
+        object edMaqInCodigoI: TEdit
+          Left = 85
+          Top = 78
+          Width = 121
+          Height = 21
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 3
+        end
+        object edMaqInCodigoF: TEdit
+          Left = 235
+          Top = 78
+          Width = 121
+          Height = 21
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 4
+        end
+        object boFiltrar: TButton
+          Left = 281
+          Top = 140
+          Width = 75
+          Height = 25
+          Caption = 'Filtrar'
+          TabOrder = 5
+          OnClick = boFiltrarClick
+        end
+        object edRank: TEdit
+          Left = 85
+          Top = 105
+          Width = 121
+          Height = 21
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 6
+        end
+      end
+    end
+    object tsDados: TTabSheet
+      Caption = 'Maquinas x Ordens de Produ'#231#227'o'
+      ImageIndex = 1
+      object Panel1: TPanel
+        Left = 0
+        Top = 429
+        Width = 744
+        Height = 41
+        Align = alBottom
+        BevelKind = bkTile
+        BevelOuter = bvNone
+        TabOrder = 0
+        object Label7: TLabel
+          Left = 7
+          Top = 8
+          Width = 263
+          Height = 24
+          Caption = 'C'#243'digo Ordem / Opera'#231#227'o'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -20
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Button1: TButton
+          Left = 455
+          Top = 8
+          Width = 129
+          Height = 25
+          Caption = 'Apontamentos'
+          TabOrder = 0
+          OnClick = Button1Click
+        end
+        object edORD_IN_CODIGO: TEdit
+          Left = 276
+          Top = 5
+          Width = 165
+          Height = 32
+          BevelInner = bvNone
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -20
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
+    end
+    object tsAtualizando: TTabSheet
+      Caption = 'Atualizando Dados'
+      ImageIndex = 2
+      TabVisible = False
+    end
+  end
+end
