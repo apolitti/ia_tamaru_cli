@@ -97,8 +97,22 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
       Height = 13
       Caption = 'Centro de Trabalho'
     end
+    object Label1: TLabel
+      Left = 460
+      Top = 20
+      Width = 93
+      Height = 13
+      Caption = 'C'#243'd. Ordem Real'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
+    end
     object edORD_IN_CODIGO: TEdit
-      Left = 18
+      Left = 460
       Top = 35
       Width = 82
       Height = 32
@@ -113,6 +127,7 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      Visible = False
       OnExit = edORD_IN_CODIGOExit
     end
     object edPRO_IN_CODIGO: TEdit
@@ -313,6 +328,25 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
       ReadOnly = True
       TabOrder = 10
     end
+    object edORD_IN_CODIGO_PAI: TEdit
+      Left = 18
+      Top = 35
+      Width = 82
+      Height = 32
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 11
+      OnExit = edORD_IN_CODIGOExit
+    end
   end
   object GroupBox2: TGroupBox
     Left = 0
@@ -322,8 +356,6 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
     Align = alClient
     Caption = '  Apontamentos  '
     TabOrder = 1
-    ExplicitTop = 275
-    ExplicitHeight = 207
     object gdApontamentos: TDBGrid
       Left = 2
       Top = 15
@@ -348,7 +380,7 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
           Expanded = False
           FieldName = 'APT_DT_APONTAMENTO'
           Title.Caption = 'Data Inicial'
-          Width = 100
+          Width = 120
           Visible = True
         end
         item
@@ -362,7 +394,7 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
           Expanded = False
           FieldName = 'APT_DT_ENCERRAMENTO'
           Title.Caption = 'Data Encerramento'
-          Width = 100
+          Width = 120
           Visible = True
         end
         item
@@ -389,7 +421,14 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
         item
           Expanded = False
           FieldName = 'APT_REF_IN_CODIGO'
-          Title.Caption = 'Motivo Refugo'
+          Title.Caption = 'C. Refugo'
+          Width = 70
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'REF_ST_NOME'
+          Title.Caption = 'Refugo'
           Width = 200
           Visible = True
         end>
@@ -401,24 +440,35 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
     Width = 776
     Height = 37
     Align = alBottom
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 2
-    object Button1: TButton
-      Left = 18
+    DesignSize = (
+      776
+      37)
+    object boApontar: TButton
+      Left = 544
       Top = 6
       Width = 100
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'Apontar'
       TabOrder = 0
-      OnClick = Button1Click
+      OnClick = boApontarClick
     end
-    object Button3: TButton
-      Left = 132
+    object boExcluir: TButton
+      Left = 661
       Top = 6
       Width = 100
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'Excluir'
       TabOrder = 1
-      OnClick = Button3Click
+      OnClick = boExcluirClick
     end
   end
   object cdsApontamentos: TClientDataSet

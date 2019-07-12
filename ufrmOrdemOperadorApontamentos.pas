@@ -40,19 +40,24 @@ type
     edMAQ_IN_CODIGO: TEdit;
     edMAQ_ST_NOME: TEdit;
     Panel1: TPanel;
-    Button1: TButton;
-    Button3: TButton;
+    boExcluir: TButton;
+    boApontar: TButton;
+    edORD_IN_CODIGO_PAI: TEdit;
+    Label1: TLabel;
+    procedure boApontarClick(Sender: TObject);
     procedure edORD_IN_CODIGOExit(Sender: TObject);
     procedure edPLF_IN_SQOPERACAOExit(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure Button3Click(Sender: TObject);
+    procedure boExcluirClick(Sender: TObject);
   private
     { Private declarations }
   public
+
     procedure CarregaApontamentos;
+
+
   end;
 
 var
@@ -62,7 +67,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDM, ufrmOrdemApontamento, ufrmFollowup;
+uses uDM, ufrmOrdemApontamento, ufrmFollowup, ufrmConsultaGrid;
 
 procedure TfrmOrdemOperadorApontamentos.edORD_IN_CODIGOExit(Sender: TObject);
 var
@@ -75,6 +80,7 @@ begin
   edPRO_ST_ALTERNATIVO.Text := '';
   edORD_DT_RECEBIMENTO.Text := '';
   edORD_ST_ALTERNATIVO.Text := '';
+  edORD_IN_CODIGO_PAI.Text := '';
 
   if edORD_IN_CODIGO.Text = '' then
     Exit;
@@ -97,7 +103,7 @@ begin
   edPRO_ST_ALTERNATIVO.Text := cds.FieldByName('PRO_ST_ALTERNATIVO').AsString;
   edORD_DT_RECEBIMENTO.Text := cds.FieldByName('ORD_DT_RECEBIMENTO').AsString;
   edORD_ST_ALTERNATIVO.Text := cds.FieldByName('ORD_ST_ALTERNATIVO').AsString;
-
+  edORD_IN_CODIGO_PAI.Text := cds.FieldByName('ORD_IN_CODIGO_PAI').AsString;
 
 end;
 
@@ -159,11 +165,11 @@ procedure TfrmOrdemOperadorApontamentos.FormShow(Sender: TObject);
 begin
 
   TForm(Self.Owner).WindowState := wsMinimized;
-  Self.BringToFront;
+  //Self.BringToFront;
 
 end;
 
-procedure TfrmOrdemOperadorApontamentos.Button1Click(Sender: TObject);
+procedure TfrmOrdemOperadorApontamentos.boApontarClick(Sender: TObject);
 begin
 
   frmOrdemApontamento := TfrmOrdemApontamento.Create(Self);
@@ -180,22 +186,28 @@ begin
   frmOrdemApontamento.edPLF_IN_SQOPERACAO.Text := edPLF_IN_SQOPERACAO.Text;
   frmOrdemApontamento.edPLF_IN_SQOPERACAOExit(frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO);
 
+  // Verifica quantas maquina existem no centro de trabalho, se existir somente uma, sugere ela
+  frmConsultaGrid := TFrmConsultaGrid.Create(Self);
+  frmConsultaGrid.vEvento := 'P_CMAQUINA_LST';
+  frmConsultaGrid.vCTR_IN_CODIGO := edMAQ_IN_CODIGO.Text;
+  frmConsultaGrid.FormShow(frmConsultaGrid);
+  if frmConsultaGrid.cdsConsulta.RecordCount = 1 then
+  begin
+    frmOrdemApontamento.edCMAQ_IN_CODIGO.Text := frmConsultaGrid.cdsConsulta.FieldByName('CMAQ_IN_CODIGO').AsString;
+    frmOrdemApontamento.edCMAQ_IN_CODIGOExit(frmOrdemApontamento.edCMAQ_IN_CODIGO);
+  end;
+  FreeAndNil(frmConsultaGrid);
+
   frmOrdemApontamento.Show;
   //frmOrdemApontamento.BringToFront;
 
 end;
 
-procedure TfrmOrdemOperadorApontamentos.Button3Click(Sender: TObject);
+procedure TfrmOrdemOperadorApontamentos.boExcluirClick(Sender: TObject);
 var
   cds : TClientDataSet;
   vParams : TStringStream;
 begin
-
-  edOPR_IN_CODIGO.Text := '';
-  edOPR_ST_OPERACAO.Text := '';
-
-  if edPLF_IN_SQOPERACAO.Text = '' then
-    Exit;
 
   vParams := TStringStream.Create;
   vParams.WriteString('"<PARAMETROS>');
@@ -211,7 +223,7 @@ begin
       raise Exception.Create(cds.FieldByName('MENSAGEM').AsString);
   except
     on E: Exception do
-      ShowMessage(E.Message);
+      MessageDlg(E.Message, mtError, [mbOK], 0);
   end;
 
   CarregaApontamentos();
@@ -235,19 +247,17 @@ begin
   vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
   vParams.WriteString('<ORD_IN_CODIGO>' + edORD_IN_CODIGO.Text + '</ORD_IN_CODIGO>');
   vParams.WriteString('<PLF_IN_SQOPERACAO>' + edPLF_IN_SQOPERACAO.Text + '</PLF_IN_SQOPERACAO>');
-  //vParams.WriteString('<OPD_ST_ALTERNATIVO>' + edOPD_ST_ALTERNATIVO.Text + '</OPD_ST_ALTERNATIVO>');
   vParams.WriteString('</PARAMETROS>"');
 
   cdsApontamentos := DM.f_evento_lst(vParams);
-
-  if not cdsApontamentos.Active then
-    Exit;
-
-
-  cdsApontamentos.Last;
-  cdsApontamentos.First;
   dsApontamentos.DataSet := cdsApontamentos;
   gdApontamentos.DataSource := dsApontamentos;
+
+  if cdsApontamentos.Active then
+  begin
+    cdsApontamentos.Last;
+    cdsApontamentos.First;
+  end;
 
 end;
 

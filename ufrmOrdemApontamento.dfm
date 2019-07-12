@@ -28,8 +28,6 @@ object frmOrdemApontamento: TfrmOrdemApontamento
     Align = alClient
     Caption = '  Apontamento  '
     TabOrder = 0
-    ExplicitWidth = 624
-    ExplicitHeight = 264
     object Label13: TLabel
       Left = 13
       Top = 198
@@ -38,20 +36,20 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Caption = 'Centro de Trabalho'
     end
     object Label1: TLabel
-      Left = 318
-      Top = 198
+      Left = 13
+      Top = 137
       Width = 48
       Height = 13
       Caption = 'Maquina'
     end
-    object Label2: TLabel
+    object lbAPT_DT_APONTAMENTO: TLabel
       Left = 13
       Top = 252
       Width = 81
       Height = 13
       Caption = 'Data Abertura'
     end
-    object Label3: TLabel
+    object lbAPT_RE_TEMPOINICIAL: TLabel
       Left = 169
       Top = 252
       Width = 81
@@ -129,22 +127,22 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Caption = 'Produto'
     end
     object Label7: TLabel
-      Left = 15
-      Top = 136
+      Left = 306
+      Top = 194
       Width = 80
       Height = 13
       Caption = 'C'#243'd. Operador'
     end
     object Label4: TLabel
-      Left = 101
-      Top = 136
+      Left = 394
+      Top = 194
       Width = 53
       Height = 13
       Caption = 'Operador'
     end
     object Label5: TLabel
       Left = 529
-      Top = 140
+      Top = 137
       Width = 105
       Height = 13
       Caption = 'Seq. Apontamento'
@@ -190,8 +188,8 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       TabOrder = 12
     end
     object edCMAQ_IN_CODIGO: TEdit
-      Left = 318
-      Top = 213
+      Left = 13
+      Top = 152
       Width = 56
       Height = 32
       BevelInner = bvNone
@@ -204,13 +202,13 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 2
       OnExit = edCMAQ_IN_CODIGOExit
     end
     object edCMAQ_ST_DESCRICAO: TEdit
-      Left = 380
-      Top = 213
-      Width = 287
+      Left = 92
+      Top = 152
+      Width = 270
       Height = 32
       TabStop = False
       BevelInner = bvNone
@@ -236,11 +234,13 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       TabOrder = 5
+      Time = 43658.386078090280000000
       TimeFormat = 'hh:mm'
     end
     object edAPT_DT_APONTAMENTO: TDatePicker
       Left = 13
       Top = 268
+      Date = 43658.000000000000000000
       DateFormat = 'dd/MM/yyyy'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -276,11 +276,13 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       TabOrder = 7
+      Time = 43658.386078564810000000
       TimeFormat = 'hh:mm'
     end
     object edAPT_DT_ENCERRAMENTO: TDatePicker
       Left = 361
       Top = 268
+      Date = 43658.000000000000000000
       DateFormat = 'dd/MM/yyyy'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -310,7 +312,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
     object edAPT_REF_IN_CODIGO_INT: TEdit
       Left = 287
       Top = 326
-      Width = 56
+      Width = 50
       Height = 32
       BevelInner = bvNone
       BevelKind = bkFlat
@@ -325,9 +327,9 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       TabOrder = 10
     end
     object edREF_ST_DESCRICAO: TEdit
-      Left = 349
+      Left = 360
       Top = 326
-      Width = 316
+      Width = 307
       Height = 32
       TabStop = False
       BevelInner = bvNone
@@ -482,8 +484,8 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       TabOrder = 19
     end
     object edOPD_ST_ALTERNATIVO: TEdit
-      Left = 13
-      Top = 155
+      Left = 306
+      Top = 213
       Width = 82
       Height = 32
       BevelInner = bvNone
@@ -496,12 +498,12 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
       OnExit = edOPD_ST_ALTERNATIVOExit
     end
     object edOPD_ST_DESCRICAO: TEdit
-      Left = 101
-      Top = 155
+      Left = 394
+      Top = 213
       Width = 273
       Height = 32
       TabStop = False
@@ -521,8 +523,8 @@ object frmOrdemApontamento: TfrmOrdemApontamento
     end
     object edAPT_IN_SEQUENCIA: TEdit
       Left = 529
-      Top = 155
-      Width = 136
+      Top = 152
+      Width = 138
       Height = 32
       TabStop = False
       Alignment = taRightJustify
@@ -540,6 +542,25 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       ReadOnly = True
       TabOrder = 21
     end
+    object boAPT_REF_IN_CODIGO_INT: TButton
+      Left = 338
+      Top = 326
+      Width = 16
+      Height = 32
+      Caption = '...'
+      TabOrder = 22
+      OnClick = boAPT_REF_IN_CODIGO_INTClick
+    end
+    object boCMAQ_IN_CODIGO: TButton
+      Left = 70
+      Top = 152
+      Width = 16
+      Height = 32
+      Caption = '...'
+      TabOrder = 23
+      TabStop = False
+      OnClick = boCMAQ_IN_CODIGOClick
+    end
   end
   object Panel1: TPanel
     Left = 0
@@ -548,20 +569,18 @@ object frmOrdemApontamento: TfrmOrdemApontamento
     Height = 37
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 259
-    ExplicitWidth = 624
     DesignSize = (
       677
       37)
-    object Button1: TButton
+    object boConfirmar: TButton
       Left = 445
       Top = 6
       Width = 100
       Height = 25
       Anchors = [akTop, akRight]
-      Caption = 'Salvar'
+      Caption = 'Confirmar'
       TabOrder = 0
-      OnClick = Button1Click
+      OnClick = boConfirmarClick
     end
     object boCancelar: TButton
       Left = 565

@@ -34,16 +34,18 @@ type
     Label6: TLabel;
     edRank: TEdit;
     Label7: TLabel;
-    ed_ORDEMOPERACAO: TEdit;
+    edORDEMOPERACAO: TEdit;
+    Timer1: TTimer;
     procedure ClientDataSet1AfterOpen(DataSet: TDataSet);
     procedure boFiltrarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pnOrdemExit(Sender: TObject);
     procedure pnOrdemEnter(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure ed_ORDEMOPERACAOExit(Sender: TObject);
+    procedure edORDEMOPERACAOExit(Sender: TObject);
     procedure pnOrdemDblClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
     sbPrincipal : TScrollBox;
@@ -535,23 +537,23 @@ begin
 
 end;
 
-procedure TfrmFollowup.ed_ORDEMOPERACAOExit(Sender: TObject);
+procedure TfrmFollowup.edORDEMOPERACAOExit(Sender: TObject);
 var
   vOrdPlf : String;
   vOrd : Integer;
   vPlf : Integer;
 begin
 
-  if ed_ORDEMOPERACAO.Text = '' then
+  if edORDEMOPERACAO.Text = '' then
     Exit;
 
-  vOrdPlf := ed_ORDEMOPERACAO.Text;
+  vOrdPlf := edORDEMOPERACAO.Text;
   vOrd := StrToInt(Copy(vOrdPlf, 0, Length(vOrdPlf) -3));
   vPlf := StrToInt(Copy(vOrdPlf, Length(vOrdPlf) -2));
 
   AbreApontamentos(vOrd, vPlf);
 
-  ed_ORDEMOPERACAO.Text := '';
+  edORDEMOPERACAO.Text := '';
 
 end;
 
@@ -615,6 +617,26 @@ begin
 
 end;
 
+procedure TfrmFollowup.Timer1Timer(Sender: TObject);
+begin
+
+  if Screen.ActiveForm = Self then
+  begin
+
+    if pcPrincipal.ActivePage = tsDados then
+    begin
+
+      if edORDEMOPERACAO.CanFocus then
+      begin
+        edORDEMOPERACAO.SetFocus;
+      end;
+
+    end;
+
+  end;
+
+end;
+
 procedure TfrmFollowup.pnOrdemDblClick(Sender: TObject);
 begin
 
@@ -647,10 +669,12 @@ begin
           frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAOExit(frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO);
 
           frmOrdemOperadorApontamentos.CarregaApontamentos();
+
       end;
     end;
   end;
   frmOrdemOperadorApontamentos.Show();
+  frmOrdemOperadorApontamentos.boApontarClick(frmOrdemOperadorApontamentos.boApontar);
 
 end;
 

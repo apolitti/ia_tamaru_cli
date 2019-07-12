@@ -101,6 +101,9 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppEnableHighDPI>true</AppEnableHighDPI>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_ExeOutput>C:\Temp</DCC_ExeOutput>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -157,6 +160,10 @@
         </DCCReference>
         <DCCReference Include="ufrmPrincipal.pas">
             <Form>frmPrincipal</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="ufrmConsultaGrid.pas">
+            <Form>frmConsultaGrid</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">
