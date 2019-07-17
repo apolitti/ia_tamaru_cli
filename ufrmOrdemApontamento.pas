@@ -21,14 +21,10 @@ type
     Label1: TLabel;
     edCMAQ_IN_CODIGO: TEdit;
     edCMAQ_ST_DESCRICAO: TEdit;
-    edAPT_RE_TEMPOINICIAL: TTimePicker;
-    edAPT_DT_APONTAMENTO: TDatePicker;
     lbAPT_DT_APONTAMENTO: TLabel;
     lbAPT_RE_TEMPOINICIAL: TLabel;
     lbAPT_RE_QUANTIDADE: TLabel;
     edAPT_RE_QUANTIDADE: TEdit;
-    edAPT_RE_TEMPOFINAL: TTimePicker;
-    edAPT_DT_ENCERRAMENTO: TDatePicker;
     lbAPT_DT_ENCERRAMENTO: TLabel;
     lbAPT_RE_TEMPOFINAL: TLabel;
     lbAPT_RE_QUANTIDADEREF: TLabel;
@@ -59,6 +55,17 @@ type
     edAPT_IN_SEQUENCIA: TEdit;
     boAPT_REF_IN_CODIGO_INT: TButton;
     boCMAQ_IN_CODIGO: TButton;
+    Label2: TLabel;
+    edORD_IN_CODIGO_PAI: TEdit;
+    edAPT_CH_STATUS: TCheckBox;
+    edAPT_DT_APONTAMENTO: TMaskEdit;
+    edAPT_RE_TEMPOINICIAL: TMaskEdit;
+    edAPT_DT_ENCERRAMENTO: TMaskEdit;
+    edAPT_RE_TEMPOFINAL: TMaskEdit;
+    lbPOD_RE_QTDE_SALDO: TLabel;
+    edPOD_RE_QTDE_SALDO: TEdit;
+    edPOD_BO_VALIDA_SALDO: TEdit;
+    lbTipoApontamento: TLabel;
     procedure boCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -70,13 +77,18 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure boAPT_REF_IN_CODIGO_INTClick(Sender: TObject);
     procedure boCMAQ_IN_CODIGOClick(Sender: TObject);
+    procedure edAPT_REF_IN_CODIGO_INTExit(Sender: TObject);
+    procedure edAPT_RE_QUANTIDADEExit(Sender: TObject);
+    procedure edAPT_RE_QUANTIDADEREFExit(Sender: TObject);
   private
-
+    vOwnerWindowState       : TWindowState;
     vOPR_BO_EDTTEMPOINICIAL : String;
     vOPR_BO_EDTTEMPOFINAL   : String;
     vOPR_BO_APTELEUNICO     : String;
     procedure CarregaApontamentos;
     procedure PreparaCampos(pAcao : String);
+    procedure ValidarQuantidadeSaldo(Sender : TObject);
+    procedure CarregarOrdemOperacao;
     { Private declarations }
   public
     { Public declarations }
@@ -89,7 +101,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDM, ufrmOrdemOperadorApontamentos, ufrmConsultaGrid;
+uses uDM, ufrmOrdemOperadorApontamentos, ufrmConsultaGrid, ufrmFollowup;
 
 procedure TfrmOrdemApontamento.boAPT_REF_IN_CODIGO_INTClick(Sender: TObject);
 begin
@@ -125,6 +137,51 @@ begin
 
 end;
 
+procedure TfrmOrdemApontamento.edAPT_REF_IN_CODIGO_INTExit(Sender: TObject);
+var
+  cds : TClientDataSet;
+  vParams : TStringStream;
+begin
+
+  edREF_ST_DESCRICAO.Text := '';
+
+  if edAPT_REF_IN_CODIGO_INT.Text = '' then
+    Exit;
+
+  vParams := TStringStream.Create;
+  vParams.WriteString('"<parametros>');
+  vParams.WriteString('<evento>P_REFUGO_LST</evento>');
+  vParams.WriteString('<org_in_codigo>' + IntToStr(wORG_IN_CODIGO) + '</org_in_codigo>');
+  vParams.WriteString('<REF_IN_CODIGO>' + edAPT_REF_IN_CODIGO_INT.Text + ' </REF_IN_CODIGO>');
+  vParams.WriteString('</parametros>"');
+
+  cds := TClientDataSet.Create(Self);
+  cds := DM.f_evento_lst(vParams);
+
+  if cds.IsEmpty then
+  begin
+    edAPT_REF_IN_CODIGO_INT.Text := '';
+    edREF_ST_DESCRICAO.Text := '';
+    MessageBox(handle,'Código do motivo não cadastrado.','Atenção:', MB_OK or MB_ICONERROR);
+    edAPT_REF_IN_CODIGO_INT.SetFocus;
+    Exit;
+  end;
+
+  edREF_ST_DESCRICAO.Text := cds.FieldByName('REF_ST_NOME').AsString;
+end;
+
+procedure TfrmOrdemApontamento.edAPT_RE_QUANTIDADEExit(Sender: TObject);
+begin
+
+  ValidarQuantidadeSaldo(Sender);
+
+end;
+
+procedure TfrmOrdemApontamento.edAPT_RE_QUANTIDADEREFExit(Sender: TObject);
+begin
+  ValidarQuantidadeSaldo(Sender);
+end;
+
 procedure TfrmOrdemApontamento.edCMAQ_IN_CODIGOExit(Sender: TObject);
 var
   cds : TClientDataSet;
@@ -134,7 +191,10 @@ begin
   edCMAQ_ST_DESCRICAO.Text := '';
 
   if edCMAQ_IN_CODIGO.Text = '' then
+  begin
+    PreparaCampos('X');
     Exit;
+  end;
 
   vParams := TStringStream.Create;
   vParams.WriteString('"<parametros>');
@@ -148,7 +208,14 @@ begin
   cds := DM.f_evento_lst(vParams);
 
   if cds.IsEmpty then
+  begin
+    edCMAQ_IN_CODIGO.Text := '';
+    edCMAQ_ST_DESCRICAO.Text := '';
+    MessageBox(handle,'Código da maquina não cadastrado.','Atenção:', MB_OK or MB_ICONERROR);
+    PreparaCampos('X');
+    edCMAQ_IN_CODIGO.SetFocus;
     Exit;
+  end;
 
   edCMAQ_ST_DESCRICAO.Text := cds.FieldByName('CMAQ_ST_DESCRICAO').AsString;
 
@@ -165,7 +232,10 @@ begin
   edOPD_ST_DESCRICAO.Text := '';
 
   if edOPD_ST_ALTERNATIVO.Text = '' then
+  begin
+    PreparaCampos('X');
     Exit;
+  end;
 
   vParams := TStringStream.Create;
   vParams.WriteString('"<parametros>');
@@ -178,11 +248,29 @@ begin
   cds := DM.f_evento_lst(vParams);
 
   if cds.IsEmpty then
+  begin
+    edOPD_ST_ALTERNATIVO.Text := '';
+    edOPD_ST_DESCRICAO.Text := '';
+    PreparaCampos('X');
+    MessageBox(handle,'Código do operador não cadastrado.','Atenção:', MB_OK or MB_ICONERROR);
+    edOPD_ST_ALTERNATIVO.SetFocus;
     Exit;
+  end;
 
   edOPD_ST_DESCRICAO.Text := cds.FieldByName('OPD_ST_DESCRICAO').AsString;
 
   CarregaApontamentos();
+
+  if edAPT_DT_APONTAMENTO.CanFocus then
+    edAPT_DT_APONTAMENTO.SetFocus
+  else if edAPT_RE_TEMPOINICIAL.CanFocus then
+    edAPT_RE_TEMPOINICIAL.SetFocus
+  else if edAPT_DT_ENCERRAMENTO.CanFocus then
+    edAPT_DT_ENCERRAMENTO.SetFocus
+  else if edAPT_RE_TEMPOFINAL.CanFocus then
+    edAPT_RE_TEMPOFINAL.SetFocus
+  else if edAPT_RE_QUANTIDADE.CanFocus then
+    edAPT_RE_QUANTIDADE.SetFocus;
 
 end;
 
@@ -212,9 +300,12 @@ begin
   if cds.IsEmpty then
     Exit;
 
-  edPRO_ST_DESCRICAO.Text := cds.FieldByName('PRO_ST_DESCRICAO').AsString;
+  edPRO_ST_DESCRICAO.Text   := cds.FieldByName('PRO_ST_DESCRICAO').AsString;
   edPRO_ST_ALTERNATIVO.Text := cds.FieldByName('PRO_ST_ALTERNATIVO').AsString;
   edORD_ST_ALTERNATIVO.Text := cds.FieldByName('ORD_ST_ALTERNATIVO').AsString;
+  edORD_IN_CODIGO_PAI.Text  := cds.FieldByName('ORD_IN_CODIGO_PAI').AsString;
+
+  CarregarOrdemOperacao();
 
 end;
 
@@ -231,11 +322,13 @@ begin
     Exit;
 
   vParams := TStringStream.Create;
-  vParams.WriteString('"<parametros>');
-  vParams.WriteString('<evento>P_OPERACAO_LST</evento>');
-  vParams.WriteString('<org_in_codigo>' + IntToStr(wORG_IN_CODIGO) + '</org_in_codigo>');
+  vParams.WriteString('"<PARAMETROS>');
+  vParams.WriteString('<EVENTO>P_OPERACAO_LST</EVENTO>');
+  vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+  vParams.WriteString('<FIL_IN_CODIGO>' + IntToStr(wFIL_IN_CODIGO) + '</FIL_IN_CODIGO>');
+  vParams.WriteString('<ORD_IN_CODIGO>' + edORD_IN_CODIGO.Text + '</ORD_IN_CODIGO>');
   vParams.WriteString('<PLF_IN_SQOPERACAO>' + edPLF_IN_SQOPERACAO.Text + ' </PLF_IN_SQOPERACAO>');
-  vParams.WriteString('</parametros>"');
+  vParams.WriteString('</PARAMETROS>"');
 
   cds := TClientDataSet.Create(Self);
   cds := DM.f_evento_lst(vParams);
@@ -258,13 +351,21 @@ begin
   vOPR_BO_EDTTEMPOFINAL    := cds.FieldByName('OPR_BO_EDTTEMPOFINAL').AsString;
   vOPR_BO_APTELEUNICO      := cds.FieldByName('OPR_BO_APTELEUNICO').AsString;
 
+  CarregarOrdemOperacao();
+
 
 end;
 procedure TfrmOrdemApontamento.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
 
-  TForm(Self.Owner).WindowState := wsNormal;
+  TForm(Self.Owner).WindowState := vOwnerWindowState;
+
+  if TForm(Self.Owner).Name = 'frmOrdemOperadorApontamentos' then
+    frmOrdemOperadorApontamentos.CarregaApontamentos()
+  else if TForm(Self.Owner).Name = 'frmFollowup' then
+    frmFollowup.boFiltrarClick(frmFollowup.boFiltrar);
+
   FreeAndNil(frmOrdemApontamento);
 
 end;
@@ -283,6 +384,7 @@ end;
 
 procedure TfrmOrdemApontamento.FormShow(Sender: TObject);
 begin
+  vOwnerWindowState := TForm(Self.Owner).WindowState;
   TForm(Self.Owner).WindowState := wsMinimized;
   //Self.BringToFront;
   PreparaCampos('X');
@@ -302,13 +404,10 @@ procedure TfrmOrdemApontamento.boConfirmarClick(Sender: TObject);
 var
   cds : TClientDataSet;
   vParams : TStringStream;
+  vAPT_CH_STATUS : String;
 begin
 
-  edOPR_IN_CODIGO.Text := '';
-  edOPR_ST_OPERACAO.Text := '';
-
-  if edPLF_IN_SQOPERACAO.Text = '' then
-    Exit;
+  vAPT_CH_STATUS := Dm.iif(edAPT_CH_STATUS.Checked, 'E', 'A');
 
   vParams := TStringStream.Create;
   vParams.WriteString('"<PARAMETROS>');
@@ -320,14 +419,15 @@ begin
   vParams.WriteString('<MAQ_IN_CODIGO>' + edMAQ_IN_CODIGO.Text + '</MAQ_IN_CODIGO>');
   vParams.WriteString('<CMAQ_IN_CODIGO>' + edCMAQ_IN_CODIGO.Text + '</CMAQ_IN_CODIGO>');
   vParams.WriteString('<OPD_ST_ALTERNATIVO>' + edOPD_ST_ALTERNATIVO.Text + '</OPD_ST_ALTERNATIVO>');
-  vParams.WriteString('<APT_DT_APONTAMENTO>' + DateToStr(edAPT_DT_APONTAMENTO.Date) + '</APT_DT_APONTAMENTO>');
-  vParams.WriteString('<APT_RE_TEMPOINICIAL>' + TimeToStr(edAPT_RE_TEMPOINICIAL.Time) + '</APT_RE_TEMPOINICIAL>');
-  vParams.WriteString('<APT_DT_ENCERRAMENTO>' + DateToStr(edAPT_DT_ENCERRAMENTO.Date) + '</APT_DT_ENCERRAMENTO>');
-  vParams.WriteString('<APT_RE_TEMPOFINAL>' + TimeToStr(edAPT_RE_TEMPOFINAL.Time) + '</APT_RE_TEMPOFINAL>');
+  vParams.WriteString('<APT_DT_APONTAMENTO>' + edAPT_DT_APONTAMENTO.Text + '</APT_DT_APONTAMENTO>');
+  vParams.WriteString('<APT_RE_TEMPOINICIAL>' + edAPT_RE_TEMPOINICIAL.Text + '</APT_RE_TEMPOINICIAL>');
+  vParams.WriteString('<APT_DT_ENCERRAMENTO>' + edAPT_DT_ENCERRAMENTO.Text + '</APT_DT_ENCERRAMENTO>');
+  vParams.WriteString('<APT_RE_TEMPOFINAL>' + edAPT_RE_TEMPOFINAL.Text + '</APT_RE_TEMPOFINAL>');
   vParams.WriteString('<APT_RE_QUANTIDADE>' + edAPT_RE_QUANTIDADE.Text + '</APT_RE_QUANTIDADE>');
   vParams.WriteString('<APT_RE_QUANTIDADEREF>' + edAPT_RE_QUANTIDADEREF.Text  + '</APT_RE_QUANTIDADEREF>');
   vParams.WriteString('<APT_REF_IN_CODIGO>' + edAPT_REF_IN_CODIGO_INT.Text + '</APT_REF_IN_CODIGO>');
   vParams.WriteString('<APT_IN_SEQUENCIA>' + edAPT_IN_SEQUENCIA.Text + '</APT_IN_SEQUENCIA>');
+  vParams.WriteString('<APT_CH_STATUS>' + vAPT_CH_STATUS + '</APT_CH_STATUS>');
   vParams.WriteString('</PARAMETROS>"');
 
   try
@@ -338,12 +438,11 @@ begin
     if cds.FieldByName('CODIGO').AsInteger <> 0 then
       raise Exception.Create(cds.FieldByName('MENSAGEM').AsString);
 
-    frmOrdemOperadorApontamentos.CarregaApontamentos();
     Self.Close;
 
   except
     on E: Exception do
-      MessageDlg(E.Message, mtError, [mbOK], 0);
+      MessageBox(handle, PChar(E.Message) ,'Atenção:', MB_OK or MB_ICONERROR);
   end;
 
 end;
@@ -388,14 +487,34 @@ begin
   begin
     // Sem apontamento abertos, iniciar novo apontamento (A)
     vAcao := 'A';
+    edAPT_CH_STATUS.Enabled := False;
+
+    // Preenche as datas do apontamento
+    edAPT_DT_APONTAMENTO.Text  := FormatDateTime('dd/mm/yyyy' , Now);
+    edAPT_RE_TEMPOINICIAL.Text := FormatDateTime('hh:nn' , Now);
+    edAPT_DT_ENCERRAMENTO.Text := FormatDateTime('dd/mm/yyyy' , Now);
+    edAPT_RE_TEMPOFINAL.Text   := FormatDateTime('hh:nn' , Now);
+
   end
   else
   begin
     // Apontamento aberto, preprarar encerramento (E)
     vAcao := 'E';
+    edAPT_CH_STATUS.Enabled := True;
+
     edAPT_IN_SEQUENCIA.Text    := cds.FieldByName('APT_IN_SEQUENCIA').AsString;
-    edAPT_DT_APONTAMENTO.Date  := cds.FieldByName('APT_DT_APONTAMENTO').AsDateTime;
-    edAPT_RE_TEMPOINICIAL.Time := StrToTime(cds.FieldByName('APT_HR_TEMPOINICIAL').AsString);
+    edAPT_DT_APONTAMENTO.Text  := cds.FieldByName('APT_DT_APONTAMENTO').AsString;
+    edAPT_RE_TEMPOINICIAL.Text := cds.FieldByName('APT_HR_TEMPOINICIAL').AsString;
+
+    edAPT_RE_QUANTIDADE.Text := cds.FieldByName('APT_RE_QUANTIDADE').AsString;
+    edAPT_RE_QUANTIDADEREF.Text := cds.FieldByName('APT_RE_QUANTIDADEREF').AsString;
+    edAPT_REF_IN_CODIGO_INT.Text := DM.iif(cds.FieldByName('APT_REF_IN_CODIGO').AsString = '0', '', cds.FieldByName('APT_REF_IN_CODIGO').AsString);
+    edAPT_REF_IN_CODIGO_INTExit(edAPT_REF_IN_CODIGO_INT);
+
+    // Preenche as datas do apontamento
+    edAPT_DT_ENCERRAMENTO.Text := FormatDateTime('dd/mm/yyyy' , Now);
+    edAPT_RE_TEMPOFINAL.Text   := FormatDateTime('hh:nn' , Now);
+
   end;
 
   PreparaCampos(vAcao);
@@ -405,11 +524,16 @@ end;
 procedure TfrmOrdemApontamento.PreparaCampos(pAcao : String);
 begin
 
+  edAPT_CH_STATUS.Enabled := False;
+
   if ((pAcao = 'A') or (pAcao = 'E')) then
   begin
 
     if vOPR_BO_APTELEUNICO = 'S' then
     begin
+      edAPT_CH_STATUS.Enabled       := True;
+      edAPT_CH_STATUS.Checked       := True;
+
       edAPT_DT_APONTAMENTO.Visible  := True;
       edAPT_RE_TEMPOINICIAL.Visible := True;
       edAPT_DT_ENCERRAMENTO.Visible := True;
@@ -441,6 +565,10 @@ begin
       if pAcao = 'A' then
       begin
         // Abertura
+        lbTipoApontamento.Caption     := 'ABERTURA DE APONTAMENTO';
+        edAPT_CH_STATUS.Enabled       := False;
+        edAPT_CH_STATUS.Checked       := False;
+
         edAPT_DT_APONTAMENTO.Visible  := True;
         edAPT_RE_TEMPOINICIAL.Visible := True;
         edAPT_DT_APONTAMENTO.Enabled  := DM.iif(vOPR_BO_EDTTEMPOINICIAL = 'S', True, False);
@@ -468,6 +596,10 @@ begin
       else
       begin
         // Encerramento
+        lbTipoApontamento.Caption     := 'ENCERRAMENTO DE APONTAMENTO';
+        edAPT_CH_STATUS.Enabled       := True;
+        edAPT_CH_STATUS.Checked       := True;
+
         edAPT_DT_APONTAMENTO.Visible  := True;
         edAPT_DT_APONTAMENTO.Enabled  := False;
         edAPT_RE_TEMPOINICIAL.Visible := True;
@@ -516,10 +648,12 @@ begin
 
     edAPT_REF_IN_CODIGO_INT.Color    := DM.iif(edAPT_REF_IN_CODIGO_INT.Enabled, clWindow, cl3DLight);
     edAPT_REF_IN_CODIGO_INT.TabStop  := DM.iif(edAPT_REF_IN_CODIGO_INT.Enabled, True    , False);
+    edPOD_RE_QTDE_SALDO.Visible      := edAPT_RE_QUANTIDADE.Visible;
 
   end
   else
   begin
+    lbTipoApontamento.Caption       := '';
     edAPT_DT_APONTAMENTO.Visible    := False;
     edAPT_RE_TEMPOINICIAL.Visible   := False;
     edAPT_DT_ENCERRAMENTO.Visible   := False;
@@ -530,6 +664,7 @@ begin
     edAPT_REF_IN_CODIGO_INT.Visible := False;
     boAPT_REF_IN_CODIGO_INT.Visible := False;
     boAPT_REF_IN_CODIGO_INT.Visible := False;
+    edPOD_RE_QTDE_SALDO.Visible     := False;
   end;
 
   lbAPT_DT_APONTAMENTO.Visible     := edAPT_DT_APONTAMENTO.Visible;
@@ -540,6 +675,73 @@ begin
   edREF_ST_DESCRICAO.Visible       := edAPT_REF_IN_CODIGO_INT.Visible;
   lbAPT_DT_ENCERRAMENTO.Visible    := edAPT_DT_ENCERRAMENTO.Visible;
   lbAPT_RE_TEMPOFINAL.Visible      := edAPT_RE_TEMPOFINAL.Visible;
+  lbPOD_RE_QTDE_SALDO.Visible      := edAPT_RE_QUANTIDADE.Visible;
+
+end;
+
+procedure TfrmOrdemApontamento.ValidarQuantidadeSaldo(Sender : TObject);
+var
+  vQuantidade : Double;
+  vRefugo : Double;
+begin
+
+  if edPOD_BO_VALIDA_SALDO.Text = 'N' then
+    Exit;
+
+  try
+    vQuantidade := StrToFloat(edAPT_RE_QUANTIDADE.Text);
+  except
+    vQuantidade := 0;
+  end;
+
+  try
+    vRefugo := StrToFloat(edAPT_RE_QUANTIDADEREF.Text);
+  except
+    vRefugo := 0;
+  end;
+
+  if (vQuantidade + vRefugo) <= StrToFloat(edPOD_RE_QTDE_SALDO.Text) then
+    Exit;
+
+  MessageBox(handle,'Soma das quantidades produzida e refugo superior ao saldo da operação.','Atenção:', MB_OK or MB_ICONERROR);
+  TEdit(Sender).Text := '0';
+  TEdit(Sender).SetFocus;
+
+end;
+
+procedure TfrmOrdemApontamento.CarregarOrdemOperacao;
+var
+  cds : TClientDataSet;
+  vParams : TStringStream;
+begin
+
+  edPOD_RE_QTDE_SALDO.Text := '0';
+  edPOD_BO_VALIDA_SALDO.Text := 'N';
+
+  if edORD_IN_CODIGO.Text = '' then
+    Exit;
+
+  if edPLF_IN_SQOPERACAO.Text = '' then
+    Exit;
+
+  vParams := TStringStream.Create;
+  vParams.WriteString('"<PARAMETROS>');
+  vParams.WriteString('<EVENTO>P_ORDEM_OPERACAO_LST</EVENTO>');
+  vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+  vParams.WriteString('<ORD_IN_CODIGO>' + edORD_IN_CODIGO.Text + ' </ORD_IN_CODIGO>');
+  vParams.WriteString('<PLF_IN_SQOPERACAO>' + edPLF_IN_SQOPERACAO.Text + ' </PLF_IN_SQOPERACAO>');
+  vParams.WriteString('</PARAMETROS>"');
+
+  cds := TClientDataSet.Create(Self);
+  cds := DM.f_evento_lst(vParams);
+
+  if ((not cds.Active) or (cds.IsEmpty)) then
+  begin
+    Exit;
+  end;
+
+  edPOD_RE_QTDE_SALDO.Text := cds.FieldByName('POD_RE_QTDE_SALDO').AsString;
+  edPOD_BO_VALIDA_SALDO.Text := cds.FieldByName('POD_RE_QTDE_SALDO').AsString;
 
 end;
 

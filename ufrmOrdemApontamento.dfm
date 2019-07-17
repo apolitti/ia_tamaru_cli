@@ -3,7 +3,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = 'Ordem > Apontamento'
-  ClientHeight = 409
+  ClientHeight = 432
   ClientWidth = 677
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,7 +24,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
     Left = 0
     Top = 0
     Width = 677
-    Height = 372
+    Height = 395
     Align = alClient
     Caption = '  Apontamento  '
     TabOrder = 0
@@ -57,7 +57,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Caption = 'Hora Abertura'
     end
     object lbAPT_RE_QUANTIDADE: TLabel
-      Left = 13
+      Left = 116
       Top = 311
       Width = 65
       Height = 13
@@ -78,25 +78,32 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Caption = 'Hora Encerramento'
     end
     object lbAPT_RE_QUANTIDADEREF: TLabel
-      Left = 171
+      Left = 218
       Top = 311
       Width = 84
       Height = 13
       Caption = 'Qtde Refugada'
     end
     object lbAPT_REF_IN_CODIGO_INT: TLabel
-      Left = 287
+      Left = 320
       Top = 311
       Width = 39
       Height = 13
       Caption = 'Motivo'
     end
     object Label9: TLabel
-      Left = 13
-      Top = 22
+      Left = 389
+      Top = 137
       Width = 38
       Height = 13
       Caption = 'Ordem'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
     end
     object Label10: TLabel
       Left = 101
@@ -147,6 +154,20 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Height = 13
       Caption = 'Seq. Apontamento'
     end
+    object Label2: TLabel
+      Left = 13
+      Top = 22
+      Width = 79
+      Height = 13
+      Caption = 'C'#243'digo Ordem'
+    end
+    object lbPOD_RE_QTDE_SALDO: TLabel
+      Left = 13
+      Top = 311
+      Width = 31
+      Height = 13
+      Caption = 'Saldo'
+    end
     object edMAQ_IN_CODIGO: TEdit
       Left = 13
       Top = 213
@@ -165,7 +186,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 11
+      TabOrder = 7
     end
     object edMAQ_ST_NOME: TEdit
       Left = 101
@@ -185,7 +206,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 12
+      TabOrder = 8
     end
     object edCMAQ_IN_CODIGO: TEdit
       Left = 13
@@ -223,94 +244,48 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 13
-    end
-    object edAPT_RE_TEMPOINICIAL: TTimePicker
-      Left = 169
-      Top = 268
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = 27
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      TabOrder = 5
-      Time = 43658.386078090280000000
-      TimeFormat = 'hh:mm'
-    end
-    object edAPT_DT_APONTAMENTO: TDatePicker
-      Left = 13
-      Top = 268
-      Date = 43658.000000000000000000
-      DateFormat = 'dd/MM/yyyy'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = 27
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      TabOrder = 4
-    end
-    object edAPT_RE_QUANTIDADE: TEdit
-      Left = 13
-      Top = 326
-      Width = 108
-      Height = 32
-      Alignment = taRightJustify
-      BevelInner = bvNone
-      BevelKind = bkFlat
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -22
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 8
-    end
-    object edAPT_RE_TEMPOFINAL: TTimePicker
-      Left = 517
-      Top = 268
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = 27
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      TabOrder = 7
-      Time = 43658.386078564810000000
-      TimeFormat = 'hh:mm'
-    end
-    object edAPT_DT_ENCERRAMENTO: TDatePicker
-      Left = 361
-      Top = 268
-      Date = 43658.000000000000000000
-      DateFormat = 'dd/MM/yyyy'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = 27
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      TabOrder = 6
-    end
-    object edAPT_RE_QUANTIDADEREF: TEdit
-      Left = 173
-      Top = 326
-      Width = 108
-      Height = 32
-      Alignment = taRightJustify
-      BevelInner = bvNone
-      BevelKind = bkFlat
-      BevelOuter = bvRaised
-      BorderStyle = bsNone
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -22
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
       TabOrder = 9
     end
+    object edAPT_RE_QUANTIDADE: TEdit
+      Left = 116
+      Top = 326
+      Width = 95
+      Height = 32
+      Alignment = taRightJustify
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -22
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+      OnExit = edAPT_RE_QUANTIDADEExit
+    end
+    object edAPT_RE_QUANTIDADEREF: TEdit
+      Left = 218
+      Top = 326
+      Width = 95
+      Height = 32
+      Alignment = taRightJustify
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -22
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
+      OnExit = edAPT_RE_QUANTIDADEREFExit
+    end
     object edAPT_REF_IN_CODIGO_INT: TEdit
-      Left = 287
+      Left = 320
       Top = 326
       Width = 50
       Height = 32
@@ -324,12 +299,13 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 10
+      TabOrder = 6
+      OnExit = edAPT_REF_IN_CODIGO_INTExit
     end
     object edREF_ST_DESCRICAO: TEdit
-      Left = 360
+      Left = 393
       Top = 326
-      Width = 307
+      Width = 274
       Height = 32
       TabStop = False
       BevelInner = bvNone
@@ -344,13 +320,14 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 14
+      TabOrder = 10
     end
     object edORD_IN_CODIGO: TEdit
-      Left = 13
-      Top = 37
+      Left = 389
+      Top = 152
       Width = 82
       Height = 32
+      TabStop = False
       BevelInner = bvNone
       BevelKind = bkFlat
       BevelOuter = bvRaised
@@ -362,6 +339,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      Visible = False
       OnExit = edORD_IN_CODIGOExit
     end
     object edORD_ST_ALTERNATIVO: TEdit
@@ -382,11 +360,11 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 15
+      TabOrder = 11
     end
     object edPLF_IN_SQOPERACAO: TEdit
       Left = 313
-      Top = 37
+      Top = 38
       Width = 82
       Height = 32
       Alignment = taRightJustify
@@ -421,7 +399,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 16
+      TabOrder = 12
     end
     object edOPR_ST_OPERACAO: TEdit
       Left = 481
@@ -441,7 +419,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 17
+      TabOrder = 13
     end
     object edPRO_ST_ALTERNATIVO: TEdit
       Left = 13
@@ -461,7 +439,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 18
+      TabOrder = 14
     end
     object edPRO_ST_DESCRICAO: TEdit
       Left = 212
@@ -481,7 +459,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 19
+      TabOrder = 15
     end
     object edOPD_ST_ALTERNATIVO: TEdit
       Left = 306
@@ -519,7 +497,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 20
+      TabOrder = 16
     end
     object edAPT_IN_SEQUENCIA: TEdit
       Left = 529
@@ -540,15 +518,15 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Font.Style = [fsBold]
       ParentFont = False
       ReadOnly = True
-      TabOrder = 21
+      TabOrder = 17
     end
     object boAPT_REF_IN_CODIGO_INT: TButton
-      Left = 338
+      Left = 371
       Top = 326
       Width = 16
       Height = 32
       Caption = '...'
-      TabOrder = 22
+      TabOrder = 18
       OnClick = boAPT_REF_IN_CODIGO_INTClick
     end
     object boCMAQ_IN_CODIGO: TButton
@@ -557,21 +535,185 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       Width = 16
       Height = 32
       Caption = '...'
-      TabOrder = 23
+      TabOrder = 19
       TabStop = False
       OnClick = boCMAQ_IN_CODIGOClick
+    end
+    object edORD_IN_CODIGO_PAI: TEdit
+      Left = 13
+      Top = 37
+      Width = 82
+      Height = 32
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 20
+      OnExit = edORD_IN_CODIGOExit
+    end
+    object edAPT_CH_STATUS: TCheckBox
+      Left = 13
+      Top = 368
+      Width = 148
+      Height = 17
+      Caption = 'Encerra Apontamento'
+      TabOrder = 21
+    end
+    object edAPT_DT_APONTAMENTO: TMaskEdit
+      Left = 13
+      Top = 268
+      Width = 145
+      Height = 32
+      BevelInner = bvNone
+      BevelOuter = bvRaised
+      BevelKind = bkFlat
+      BorderStyle = bsNone
+      EditMask = '99/99/9999;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      MaxLength = 10
+      ParentFont = False
+      TabOrder = 22
+      Text = '  /  /    '
+    end
+    object edAPT_RE_TEMPOINICIAL: TMaskEdit
+      Left = 166
+      Top = 268
+      Width = 81
+      Height = 32
+      BevelInner = bvNone
+      BevelOuter = bvRaised
+      BevelKind = bkFlat
+      BorderStyle = bsNone
+      EditMask = '!99:99;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      MaxLength = 5
+      ParentFont = False
+      TabOrder = 23
+      Text = '  :  '
+    end
+    object edAPT_DT_ENCERRAMENTO: TMaskEdit
+      Left = 361
+      Top = 268
+      Width = 147
+      Height = 32
+      BevelInner = bvNone
+      BevelOuter = bvRaised
+      BevelKind = bkFlat
+      BorderStyle = bsNone
+      EditMask = '!99/99/9999;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      MaxLength = 10
+      ParentFont = False
+      TabOrder = 24
+      Text = '  /  /    '
+    end
+    object edAPT_RE_TEMPOFINAL: TMaskEdit
+      Left = 517
+      Top = 268
+      Width = 81
+      Height = 32
+      BevelInner = bvNone
+      BevelOuter = bvRaised
+      BevelKind = bkFlat
+      BorderStyle = bsNone
+      EditMask = '!99:99;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      MaxLength = 5
+      ParentFont = False
+      TabOrder = 25
+      Text = '  :  '
+    end
+    object edPOD_RE_QTDE_SALDO: TEdit
+      Left = 13
+      Top = 326
+      Width = 95
+      Height = 32
+      TabStop = False
+      Alignment = taRightJustify
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 26
+    end
+    object edPOD_BO_VALIDA_SALDO: TEdit
+      Left = 13
+      Top = 326
+      Width = 29
+      Height = 32
+      TabStop = False
+      Alignment = taRightJustify
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BorderStyle = bsNone
+      Color = cl3DLight
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -20
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 27
+      Visible = False
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 372
+    Top = 395
     Width = 677
     Height = 37
     Align = alBottom
+    BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
       677
       37)
+    object lbTipoApontamento: TLabel
+      Left = 7
+      Top = 7
+      Width = 176
+      Height = 22
+      Caption = 'lbTipoApontamento'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -18
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object boConfirmar: TButton
       Left = 445
       Top = 6
@@ -583,7 +725,7 @@ object frmOrdemApontamento: TfrmOrdemApontamento
       OnClick = boConfirmarClick
     end
     object boCancelar: TButton
-      Left = 565
+      Left = 567
       Top = 6
       Width = 100
       Height = 25

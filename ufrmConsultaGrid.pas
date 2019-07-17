@@ -30,9 +30,11 @@ type
 
   public
     vEvento : String;
-    vCampoRetorno  : String;
-    vValorRetorno  : String;
-    vCTR_IN_CODIGO : String;    
+    vCampoRetorno     : String;
+    vValorRetorno     : String;
+    vCTR_IN_CODIGO    : String;
+    vATI_IN_CODIGO    : String;
+    vATI_CH_PRODUTIVA : String;
   end;
 
 var
@@ -125,10 +127,62 @@ begin
     gdConsulta.Columns[1].FieldName     := 'CMAQ_ST_DESCRICAO';
     gdConsulta.Columns[1].Title.Caption := 'Nome';        
     gdConsulta.Columns[1].Width         := 500;  
-  end;
-       
+  end
+  else if (vEvento = 'P_ATIVIDADE_LST') then
+  begin
 
-  
+    vParams := TStringStream.Create;
+    vParams.WriteString('"<PARAMETROS>');
+    vParams.WriteString('<EVENTO>P_ATIVIDADE_LST</EVENTO>');
+    vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+    vParams.WriteString('<ATI_IN_CODIGO>' + vCTR_IN_CODIGO + '</ATI_IN_CODIGO>');
+    vParams.WriteString('<ATI_CH_PRODUTIVA>' + vATI_CH_PRODUTIVA + '</ATI_CH_PRODUTIVA>');
+
+    if edValor.Text <> '' then
+    begin
+      vParams.WriteString('<' + vCampos.Strings[edCampo.ItemIndex] + '>' + edValor.Text + '</' + vCampos.Strings[edCampo.ItemIndex] + '>');
+    end;
+    vParams.WriteString('</PARAMETROS>"');
+
+    vCampoRetorno := 'ATI_IN_CODIGO';
+
+    gdConsulta.Columns.Clear;
+    gdConsulta.Columns.Add;
+    gdConsulta.Columns[0].FieldName     := 'ATI_IN_CODIGO';
+    gdConsulta.Columns[0].Title.Caption := 'Código';
+    gdConsulta.Columns[0].Width         := 100;
+    gdConsulta.Columns.Add;
+    gdConsulta.Columns[1].FieldName     := 'ATI_ST_NOME';
+    gdConsulta.Columns[1].Title.Caption := 'Nome';
+    gdConsulta.Columns[1].Width         := 500;
+  end
+  else if (vEvento = 'P_MAQUINA_LST') then
+  begin
+
+    vParams := TStringStream.Create;
+    vParams.WriteString('"<PARAMETROS>');
+    vParams.WriteString('<EVENTO>P_MAQUINA_LST</EVENTO>');
+    vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+
+    if edValor.Text <> '' then
+    begin
+      vParams.WriteString('<' + vCampos.Strings[edCampo.ItemIndex] + '>' + edValor.Text + '</' + vCampos.Strings[edCampo.ItemIndex] + '>');
+    end;
+
+    vParams.WriteString('</PARAMETROS>"');
+
+    vCampoRetorno := 'MAQ_IN_CODIGO';
+
+    gdConsulta.Columns.Clear;
+    gdConsulta.Columns.Add;
+    gdConsulta.Columns[0].FieldName     := 'MAQ_IN_CODIGO';
+    gdConsulta.Columns[0].Title.Caption := 'Código';
+    gdConsulta.Columns[0].Width         := 100;
+    gdConsulta.Columns.Add;
+    gdConsulta.Columns[1].FieldName     := 'MAQ_ST_NOME';
+    gdConsulta.Columns[1].Title.Caption := 'Nome';
+    gdConsulta.Columns[1].Width         := 500;
+  end;
   
   if (vParams.Size > 0) then
   begin

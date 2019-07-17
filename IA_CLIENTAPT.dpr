@@ -15,7 +15,8 @@ uses
   ufrmOrdemOperadorApontamentos in 'ufrmOrdemOperadorApontamentos.pas' {frmOrdemOperadorApontamentos},
   ufrmOrdemApontamento in 'ufrmOrdemApontamento.pas' {frmOrdemApontamento},
   ufrmPrincipal in 'ufrmPrincipal.pas' {frmPrincipal},
-  ufrmConsultaGrid in 'ufrmConsultaGrid.pas' {frmConsultaGrid};
+  ufrmConsultaGrid in 'ufrmConsultaGrid.pas' {frmConsultaGrid},
+  ufrmApontamentoImprodutivo in 'ufrmApontamentoImprodutivo.pas' {frmApontamentoImprodutivo};
 
 {$R *.res}
 

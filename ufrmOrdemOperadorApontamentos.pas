@@ -44,6 +44,7 @@ type
     boApontar: TButton;
     edORD_IN_CODIGO_PAI: TEdit;
     Label1: TLabel;
+    Button1: TButton;
     procedure boApontarClick(Sender: TObject);
     procedure edORD_IN_CODIGOExit(Sender: TObject);
     procedure edPLF_IN_SQOPERACAOExit(Sender: TObject);
@@ -51,6 +52,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure boExcluirClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -120,11 +122,13 @@ begin
     Exit;
 
   vParams := TStringStream.Create;
-  vParams.WriteString('"<parametros>');
-  vParams.WriteString('<evento>P_OPERACAO_LST</evento>');
-  vParams.WriteString('<org_in_codigo>' + IntToStr(wORG_IN_CODIGO) + '</org_in_codigo>');
+  vParams.WriteString('"<PARAMETROS>');
+  vParams.WriteString('<EVENTO>P_OPERACAO_LST</EVENTO>');
+  vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+  vParams.WriteString('<FIL_IN_CODIGO>' + IntToStr(wFIL_IN_CODIGO) + '</FIL_IN_CODIGO>');
+  vParams.WriteString('<ORD_IN_CODIGO>' + edORD_IN_CODIGO.Text + '</ORD_IN_CODIGO>');
   vParams.WriteString('<PLF_IN_SQOPERACAO>' + edPLF_IN_SQOPERACAO.Text + ' </PLF_IN_SQOPERACAO>');
-  vParams.WriteString('</parametros>"');
+  vParams.WriteString('</PARAMETROS>"');
 
   cds := TClientDataSet.Create(Self);
   cds := DM.f_evento_lst(vParams);
@@ -209,6 +213,9 @@ var
   vParams : TStringStream;
 begin
 
+  if MessageBox(handle,'Deseja excluir o apontamento?','Atenção:', MB_YESNO or MB_ICONQUESTION) <> mrYes then
+    Exit;
+
   vParams := TStringStream.Create;
   vParams.WriteString('"<PARAMETROS>');
   vParams.WriteString('<EVENTO>P_APONTAMENTO_DEL</EVENTO>');
@@ -228,6 +235,11 @@ begin
 
   CarregaApontamentos();
 
+end;
+
+procedure TfrmOrdemOperadorApontamentos.Button1Click(Sender: TObject);
+begin
+  Self.Close;
 end;
 
 procedure TfrmOrdemOperadorApontamentos.CarregaApontamentos;

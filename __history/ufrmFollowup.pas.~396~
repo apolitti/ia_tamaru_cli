@@ -1,0 +1,928 @@
+unit ufrmFollowup;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Datasnap.DBClient, Vcl.Grids,
+  Vcl.DBGrids, System.JSON, IPPeerClient, REST.Client,
+  REST.Authenticator.Simple, Data.Bind.Components, Data.Bind.ObjectScope,
+  REST.Response.Adapter, Datasnap.DSClientRest, REST.Authenticator.Basic,
+  Vcl.ExtCtrls, JvExExtCtrls, JvExtComponent, JvPanel, JvExForms, JvScrollBox,
+  JvExControls, JvLabel, DBXJSON, DBXJSONReflect, Vcl.DBCGrids, Vcl.StdCtrls,
+  Vcl.Mask, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.WinXPickers, System.ImageList,
+  Vcl.ImgList, Vcl.Buttons;
+
+type
+  TfrmFollowup = class(TForm)
+    pcPrincipal: TPageControl;
+    tsFiltro: TTabSheet;
+    tsDados: TTabSheet;
+    Panel1: TPanel;
+    tsAtualizando: TTabSheet;
+    gbParametro: TGroupBox;
+    Label4: TLabel;
+    edMAQ_IN_CODIGO_I: TEdit;
+    Label5: TLabel;
+    edMAQ_IN_CODIGO_F: TEdit;
+    boFiltrar: TButton;
+    Label6: TLabel;
+    edRank: TEdit;
+    Label7: TLabel;
+    edORDEMOPERACAO: TEdit;
+    Timer1: TTimer;
+    tsHistorico: TTabSheet;
+    gdHistorico: TDBGrid;
+    pnHistoricoFiltro: TPanel;
+    Label8: TLabel;
+    edHistoricoORD_IN_CODIGO: TEdit;
+    edHistoricoMAQ_IN_CODIGO: TEdit;
+    Label9: TLabel;
+    Label11: TLabel;
+    Label10: TLabel;
+    boHistoricoFiltrar: TButton;
+    cdsHistorico: TClientDataSet;
+    dsHistorico: TDataSource;
+    edHistoricoAPT_CH_STATUS: TComboBox;
+    Label12: TLabel;
+    boFollowup: TButton;
+    boApontamentoImprodutivo: TButton;
+    Label1: TLabel;
+    edCEL_IN_CODIGO_I: TEdit;
+    Label2: TLabel;
+    edCEL_IN_CODIGO_F: TEdit;
+    edHistoricoAPT_DT_APONTAMENTO: TMaskEdit;
+    edHistoricoAPT_DT_ENCERRAMENTO: TMaskEdit;
+    procedure ClientDataSet1AfterOpen(DataSet: TDataSet);
+    procedure boFiltrarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure pnOrdemExit(Sender: TObject);
+    procedure pnOrdemEnter(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure edORDEMOPERACAOExit(Sender: TObject);
+    procedure pnOrdemDblClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Timer1Timer(Sender: TObject);
+    procedure boHistoricoFiltrarClick(Sender: TObject);
+    procedure boFollowupClick(Sender: TObject);
+    procedure boApontamentoImprodutivoClick(Sender: TObject);
+  private
+    { Private declarations }
+    sbPrincipal : TScrollBox;
+    procedure ConsultaFollowup(pParams : TStringStream);
+    procedure AbreApontamentos(pORD_IN_CODIGO, pPLF_IN_SQOPERACAO: Integer);
+    procedure boMaquinaHistoricoClick(Sender: TObject);
+  public
+    { Public declarations }
+    vORD_IN_CODIGOSelecionado : Integer;
+    vPLF_IN_SQOPERACAOSelecionado : Integer;
+    cdsMaquinaOrdens : TClientDataSet;
+  end;
+
+var
+  frmFollowup: TfrmFollowup;
+
+implementation
+
+{$R *.dfm}
+
+uses uDM, ufrmOrdemOperadorApontamentos, ufrmOrdemApontamento, ufrmConsultaGrid, ufrmApontamentoImprodutivo;
+
+procedure TfrmFollowup.boApontamentoImprodutivoClick(Sender: TObject);
+begin
+
+  frmApontamentoImprodutivo := TfrmApontamentoImprodutivo.Create(Self);
+  frmApontamentoImprodutivo.Show();
+
+end;
+
+procedure TfrmFollowup.boFiltrarClick(Sender: TObject);
+var
+  i : Integer;
+  vParams : TStringStream;
+begin
+  try
+
+    vParams := TStringStream.Create;
+    vParams.WriteString('"<parametros>');
+    vParams.WriteString('<evento>P_MAQUINA_ORDEM_LST</evento>');
+    vParams.WriteString('<org_in_codigo>' + IntToStr(wORG_IN_CODIGO) + '</org_in_codigo>');
+    vParams.WriteString('<cel_in_codigo_i>'+ edCEL_IN_CODIGO_I.Text +'</cel_in_codigo_i>');
+    vParams.WriteString('<cel_in_codigo_f>'+ edCEL_IN_CODIGO_F.Text +'</cel_in_codigo_f>');
+    vParams.WriteString('<maq_in_codigo_i>'+ edMAQ_IN_CODIGO_I.Text +'</maq_in_codigo_i>');
+    vParams.WriteString('<maq_in_codigo_f>'+ edMAQ_IN_CODIGO_F.Text +'</maq_in_codigo_f>');
+    vParams.WriteString('<rank>'+edRank.Text+'</rank>');
+    vParams.WriteString('</parametros>"');
+
+    tsFiltro.TabVisible := False;
+    tsDados.TabVisible := False;
+    tsAtualizando.TabVisible := True;
+    pcPrincipal.ActivePage := tsAtualizando;
+    sbPrincipal.Free;
+
+    ConsultaFollowup(vParams);
+
+  finally
+
+    tsFiltro.TabVisible := True;
+    tsDados.TabVisible := True;
+    tsAtualizando.TabVisible := False;
+    pcPrincipal.ActivePage := tsDados;
+
+  end;
+
+end;
+
+procedure TfrmFollowup.boFollowupClick(Sender: TObject);
+begin
+
+  frmOrdemOperadorApontamentos := TfrmOrdemOperadorApontamentos.Create(Self);
+  if vORD_IN_CODIGOSelecionado <> null then
+  begin
+    if not cdsMaquinaOrdens.IsEmpty then
+    begin
+      begin
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.ReadOnly := True;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.Color := cl3DLight;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.TabStop := False;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.Text := IntToStr(vORD_IN_CODIGOSelecionado);
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGOExit(frmOrdemOperadorApontamentos.edORD_IN_CODIGO);
+
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.ReadOnly := True;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.Color := cl3DLight;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.TabStop := False;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.Text := IntToStr(vPLF_IN_SQOPERACAOSelecionado);
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAOExit(frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO);
+
+          frmOrdemOperadorApontamentos.CarregaApontamentos();
+
+      end;
+    end;
+  end;
+  frmOrdemOperadorApontamentos.Show();
+
+end;
+
+procedure TfrmFollowup.boHistoricoFiltrarClick(Sender: TObject);
+var
+  vParams : TStringStream;
+  vAPT_CH_STATUS : String;
+begin
+
+  case edHistoricoAPT_CH_STATUS.ItemIndex of
+    0 : vAPT_CH_STATUS := '';
+    1 : vAPT_CH_STATUS := 'A';
+    2 : vAPT_CH_STATUS := 'E';
+  end;
+
+  vParams := TStringStream.Create;
+  vParams.WriteString('"<PARAMETROS>');
+  vParams.WriteString('<EVENTO>P_APONTAMENTO_LST</EVENTO>');
+  vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+  vParams.WriteString('<ORD_IN_CODIGO>' + edHistoricoORD_IN_CODIGO.Text + '</ORD_IN_CODIGO>');
+  vParams.WriteString('<MAQ_IN_CODIGO>' + edHistoricoMAQ_IN_CODIGO.Text + '</MAQ_IN_CODIGO>');
+  vParams.WriteString('<APT_DT_APONTAMENTO>' + DM.iif(edHistoricoAPT_DT_APONTAMENTO.Text = '  /  /    ', '', edHistoricoAPT_DT_APONTAMENTO.Text) + '</APT_DT_APONTAMENTO>');
+  vParams.WriteString('<APT_DT_ENCERRAMENTO>' + DM.iif(edHistoricoAPT_DT_ENCERRAMENTO.Text = '  /  /    ', '', edHistoricoAPT_DT_ENCERRAMENTO.Text) + '</APT_DT_ENCERRAMENTO>');
+  vParams.WriteString('<APT_CH_STATUS>' + vAPT_CH_STATUS + '</APT_CH_STATUS>');
+  vParams.WriteString('</PARAMETROS>"');
+
+  cdsHistorico := DM.f_evento_lst(vParams);
+  dsHistorico.DataSet := cdsHistorico;
+  gdHistorico.DataSource := dsHistorico;
+
+  if cdsHistorico.Active then
+  begin
+    cdsHistorico.Last;
+    cdsHistorico.First;
+  end;
+end;
+
+procedure TfrmFollowup.Button1Click(Sender: TObject);
+begin
+
+  frmOrdemOperadorApontamentos := TfrmOrdemOperadorApontamentos.Create(Self);
+  if vORD_IN_CODIGOSelecionado <> null then
+  begin
+    if not cdsMaquinaOrdens.IsEmpty then
+    begin
+      if cdsMaquinaOrdens.Locate('ORD_IN_CODIGO;PLF_IN_SQOPERACAO', VarArrayOf([IntToStr(vORD_IN_CODIGOSelecionado), IntToStr(vPLF_IN_SQOPERACAOSelecionado)]), []) then
+      begin
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.ReadOnly := True;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.Color := cl3DLight;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.TabStop := False;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGO.Text := cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString;
+          frmOrdemOperadorApontamentos.edORD_IN_CODIGOExit(frmOrdemOperadorApontamentos.edORD_IN_CODIGO);
+
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.ReadOnly := True;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.Color := cl3DLight;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.TabStop := False;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO.Text := cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+          frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAOExit(frmOrdemOperadorApontamentos.edPLF_IN_SQOPERACAO);
+      end;
+    end;
+  end;
+  frmOrdemOperadorApontamentos.Show();
+end;
+
+procedure TfrmFollowup.ClientDataSet1AfterOpen(DataSet: TDataSet);
+var
+  vPanelPrincipal: TPanel;
+begin
+
+
+end;
+
+procedure TfrmFollowup.ConsultaFollowup(pParams : TStringStream);
+var
+  url : String;
+  r1 : TStringStream;
+  r2 : TStringStream;
+
+  // Configuracoes
+  iFontSize : Integer;
+  iEditHeight : Integer;
+  iBevelWidth : Integer;
+
+  // Linha da Maquina
+  pnMaquinaPrinc : TPanel;
+
+  // Colunas das Ordens
+  sbMaquina : TScrollBox;
+  // Panel com dados da Maquina
+  pnMaquina : TPanel;
+  edMaqStNome : TEdit;
+  edMaqInCodigo : TEdit;
+  pnOrdem : TPanel;
+  boMaquinaHistorico : TSpeedButton;
+  boMaquinaOcorrencia : TSpeedButton;
+
+  // Primeira Linha
+  //edOrdem : TEdit;
+  edOrdemPai : TEdit;
+  lbPlfInSqoperacao : TLabel;
+  edPlfInSqoperacao : TEdit;
+
+  // Segunda Linha
+  //edOrdStComplemento : TEdit;
+  edOrdStatus : TEdit;
+  edAptDtInicio : TEdit;
+  edGruStNome : TEdit;
+  lbPodReTempoExecPrevUnit : TLabel;
+  edPodReTempoExecPrevUnit : TEdit;
+  lbPodReTempoExecPrevTot : TLabel;
+  edPodReTempoExecPrevTot : TEdit;
+
+  //lbOrdDtRecebimento : TLabel;
+  edOrdDtRecebimento : TEdit;
+
+  lbPodReQtdenecessaria : TLabel;
+  edPodReQtdenecessaria : TEdit;
+
+  lbPodReQtdereal : TLabel;
+  edPodReQtdereal : TEdit;
+
+  // Terceira Linha
+  edProStAlternativo : TEdit;
+  edProStDescricao : TEdit;
+
+  iMaquina : Integer;
+begin
+
+  sbPrincipal := TScrollBox.Create(Self);
+  sbPrincipal.Parent := tsDados;
+  sbPrincipal.Align := alClient;
+
+  iFontSize := -12;
+  iEditHeight := 20;
+  iBevelWidth := 2;
+
+  {r2 := TStringStream.Create('',TEncoding.UTF8);
+  DM.IdHTTP1.Put(wURL + 'p_followup_lst', pParams, r2);
+
+  try
+    r2.Position := 0;
+    DM.JsonToDataset(cdsMaquinaOrdens, r2.DataString);
+  except
+  end;}
+
+  cdsMaquinaOrdens := DM.f_evento_lst(pParams);
+
+  iMaquina := 0;
+  cdsMaquinaOrdens.Last;
+  cdsMaquinaOrdens.First;
+  while not cdsMaquinaOrdens.Eof do
+  begin
+
+    // Veririca se é o primeiro registro da maquina
+    if iMaquina <> cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsInteger then
+    begin
+
+      iMaquina := cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsInteger;
+
+      pnMaquinaPrinc := TPanel.Create(Self);
+      pnMaquinaPrinc.Caption := '';
+      pnMaquinaPrinc.Parent := sbPrincipal;
+      pnMaquinaPrinc.Height := 100;
+      pnMaquinaPrinc.Align := alTop;
+      pnMaquinaPrinc.BevelInner := bvNone;
+      pnMaquinaPrinc.BevelOuter := bvNone;
+      pnMaquinaPrinc.BevelKind := bkNone;
+      pnMaquinaPrinc.BorderStyle := bsNone;
+
+      pnMaquina := TPanel.Create(Self);
+      pnMaquina.Caption := '';
+      pnMaquina.Parent := pnMaquinaPrinc;
+      pnMaquina.Align := alLeft;
+      pnMaquina.Width := 260;
+
+      edMaqInCodigo := TEdit.Create(Self);
+      edMaqInCodigo.Parent := pnMaquina;
+      edMaqInCodigo.Width := 60;
+      edMaqInCodigo.Top := 5;
+      edMaqInCodigo.Left := 5;
+      edMaqInCodigo.Text := cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsString;
+      edMaqInCodigo.Font.Size := -15;
+      edMaqInCodigo.Font.Style := [fsBold];
+      edMaqInCodigo.Color := cl3DLight;
+      edMaqInCodigo.BorderStyle := bsNone;
+
+      edMaqStNome := TEdit.Create(Self);
+      edMaqStNome.Parent := pnMaquina;
+      edMaqStNome.Width := 250;
+      edMaqStNome.Top := edMaqInCodigo.Top + edMaqInCodigo.Height + 5;
+      edMaqStNome.Left := edMaqInCodigo.Left;
+      edMaqStNome.Text := cdsMaquinaOrdens.FieldByName('MAQ_ST_NOME').AsString;
+      edMaqStNome.Font.Size := -15;
+      edMaqStNome.Font.Style := [fsBold];
+      edMaqStNome.Color := cl3DLight;
+      edMaqStNome.BorderStyle := bsNone;
+
+      boMaquinaHistorico := TSpeedButton.Create(Self);
+      boMaquinaHistorico.Parent := pnMaquina;
+      boMaquinaHistorico.Caption := 'Histórico';
+      boMaquinaHistorico.Left := edMaqStNome.Left;
+      boMaquinaHistorico.Top := edMaqStNome.Top + edMaqStNome.Height + 2;
+      boMaquinaHistorico.Flat := True;
+      boMaquinaHistorico.Width := 80;
+      boMaquinaHistorico.Height := 26;
+      boMaquinaHistorico.OnClick := boMaquinaHistoricoClick;
+      boMaquinaHistorico.Name := 'boMaquinaHistorico_' + cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsString;
+
+      boMaquinaOcorrencia := TSpeedButton.Create(Self);
+      boMaquinaOcorrencia.Parent := pnMaquina;
+      boMaquinaOcorrencia.Caption := 'Histórico';
+      boMaquinaOcorrencia.Left := boMaquinaHistorico.Left + boMaquinaHistorico.Width + 10;
+      boMaquinaOcorrencia.Top := boMaquinaHistorico.Top;
+      boMaquinaOcorrencia.Flat := True;
+      boMaquinaOcorrencia.Width := 80;
+      boMaquinaOcorrencia.Height := 26;
+      boMaquinaOcorrencia.OnClick := boMaquinaOcorrenciaClick;
+      boMaquinaOcorrencia.Name := 'boMaquinaOcorrencia_' + cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsString;
+
+      sbMaquina := TScrollBox.Create(Self);
+      sbMaquina.Parent := pnMaquinaPrinc;
+      sbMaquina.Align := alClient;
+      sbMaquina.HorzScrollBar.Increment := 500;
+      sbMaquina.BevelInner := bvNone;
+      sbMaquina.BevelOuter := bvNone;
+      sbMaquina.BevelKind := bkNone;
+      sbMaquina.BorderStyle := bsNone;
+
+    end;
+
+    pnOrdem := TPanel.Create(Self);
+    pnOrdem.Caption := ' ';
+    pnOrdem.Name := 'pnOrdem_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    pnOrdem.Parent := sbMaquina;
+    pnOrdem.Align := alLeft;
+    pnOrdem.Width := 430;
+    pnOrdem.BevelOuter := bvNone;
+    pnOrdem.BevelInner := bvNone;
+    pnOrdem.BevelKind := bkFlat;
+    pnOrdem.OnExit := pnOrdemExit;
+    pnOrdem.OnEnter := pnOrdemEnter;
+    pnOrdem.OnClick := pnOrdemEnter;
+    pnOrdem.OnDblClick := pnOrdemDblClick;
+    pnOrdem.Tag := cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsInteger;
+    pnOrdem.Font.Style := [fsBold];
+    pnOrdem.Cursor := crHandPoint;
+
+    // Primeira Linha
+    {edOrdem := TEdit.Create(Self);
+    edOrdem.Parent := pnOrdem;
+    edOrdem.Top := 5;
+    edOrdem.Left := 5;
+    edOrdem.Text := cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString;
+    edOrdem.Color := cl3DLight;
+    edOrdem.Width := 50;
+    edOrdem.Font.Size := iFontSize;
+    edOrdem.BorderStyle := bsNone;
+    edOrdem.Height := iEditHeight;
+    edOrdem.BevelInner := bvNone;
+    edOrdem.BevelKind := bkFlat;
+    edOrdem.BevelOuter := bvRaised;
+    edOrdem.BevelWidth := iBevelWidth;}
+
+    edOrdemPai := TEdit.Create(Self);
+    edOrdemPai.Parent := pnOrdem;
+    edOrdemPai.Top := 5;
+    edOrdemPai.Left := 5;
+    edOrdemPai.Text := cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO_PAI').AsString;
+    edOrdemPai.Color := clRed;
+    edOrdemPai.Alignment := taRightJustify;
+    edOrdemPai.Width := 60;
+    edOrdemPai.Font.Size := iFontSize;
+    edOrdemPai.BorderStyle := bsNone;
+    edOrdemPai.Height := iEditHeight;
+    edOrdemPai.BevelInner := bvNone;
+    edOrdemPai.BevelKind := bkFlat;
+    edOrdemPai.BevelOuter := bvRaised;
+    edOrdemPai.BevelWidth := iBevelWidth;
+    edOrdemPai.OnDblClick := pnOrdemDblClick;
+    edOrdemPai.Name := 'edOrdemPai_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edOrdemPai.ReadOnly := True;
+    edOrdemPai.Cursor := crHandPoint;
+
+    lbPlfInSqoperacao := TLabel.Create(Self);
+    lbPlfInSqoperacao.Parent := pnOrdem;
+    lbPlfInSqoperacao.Top  := edOrdemPai.Top + 3;
+    lbPlfInSqoperacao.Left := edOrdemPai.Left + edOrdemPai.Width + 2;
+    lbPlfInSqoperacao.Caption := '/';
+    lbPlfInSqoperacao.Font.Size := iFontSize;
+
+    edPlfInSqoperacao := TEdit.Create(Self);
+    edPlfInSqoperacao.Parent := pnOrdem;
+    edPlfInSqoperacao.Top := edOrdemPai.Top;
+    edPlfInSqoperacao.Left := lbPlfInSqoperacao.Left + lbPlfInSqoperacao.Width + 2;
+    edPlfInSqoperacao.Text := cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edPlfInSqoperacao.Color := clSkyBlue;
+    edPlfInSqoperacao.Width := 30;
+    edPlfInSqoperacao.Font.Size := iFontSize;
+    edPlfInSqoperacao.BorderStyle := bsNone;
+    edPlfInSqoperacao.Height := iEditHeight;
+    edPlfInSqoperacao.BevelInner := bvNone;
+    edPlfInSqoperacao.BevelKind := bkFlat;
+    edPlfInSqoperacao.BevelOuter := bvRaised;
+    edPlfInSqoperacao.BevelWidth := iBevelWidth;
+    edPlfInSqoperacao.OnDblClick := pnOrdemDblClick;
+    edPlfInSqoperacao.Name := 'edPlfInSqoperacao_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edPlfInSqoperacao.ReadOnly := True;
+    edPlfInSqoperacao.Cursor := crHandPoint;
+
+    lbPodReQtdereal := TLabel.Create(Self);
+    lbPodReQtdereal.Parent := pnOrdem;
+    lbPodReQtdereal.Top  := edOrdemPai.Top + 3;
+    lbPodReQtdereal.Left := edPlfInSqoperacao.Left + edPlfInSqoperacao.Width + 5;
+    lbPodReQtdereal.Caption := 'QT';
+    lbPodReQtdereal.Font.Size := iFontSize;
+    lbPodReQtdereal.OnDblClick := pnOrdemDblClick;
+    lbPodReQtdereal.Name := 'lbPodReQtdereal_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+
+    edPodReQtdereal := TEdit.Create(Self);
+    edPodReQtdereal.Parent := pnOrdem;
+    edPodReQtdereal.Top := edOrdemPai.Top;
+    edPodReQtdereal.Left := lbPodReQtdereal.Left + lbPodReQtdereal.Width + 2;
+    edPodReQtdereal.Text := cdsMaquinaOrdens.FieldByName('POD_RE_QTDEREAL').AsString;
+    edPodReQtdereal.Color := clSkyBlue;
+    edPodReQtdereal.Width := 30;
+    edPodReQtdereal.Font.Size := iFontSize;
+    edPodReQtdereal.BorderStyle := bsNone;
+    edPodReQtdereal.Height := iEditHeight;
+    edPodReQtdereal.BevelInner := bvNone;
+    edPodReQtdereal.BevelKind := bkFlat;
+    edPodReQtdereal.BevelOuter := bvRaised;
+    edPodReQtdereal.Alignment := taRightJustify;
+    edPodReQtdereal.BevelWidth := iBevelWidth;
+    edPodReQtdereal.OnDblClick := pnOrdemDblClick;
+    edPodReQtdereal.Name := 'edPodReQtdereal_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edPodReQtdereal.ReadOnly := True;
+    edPodReQtdereal.Cursor := crHandPoint;
+
+    lbPodReQtdenecessaria := TLabel.Create(Self);
+    lbPodReQtdenecessaria.Parent := pnOrdem;
+    lbPodReQtdenecessaria.Top  := edOrdemPai.Top + 3;
+    lbPodReQtdenecessaria.Left := edPodReQtdereal.Left + edPodReQtdereal.Width + 2;
+    lbPodReQtdenecessaria.Caption := '/';
+    lbPodReQtdenecessaria.Font.Size := iFontSize;
+    lbPodReQtdenecessaria.OnDblClick := pnOrdemDblClick;
+    lbPodReQtdenecessaria.Name := 'lbPodReQtdenecessaria_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+
+    edPodReQtdenecessaria := TEdit.Create(Self);
+    edPodReQtdenecessaria.Parent := pnOrdem;
+    edPodReQtdenecessaria.Top := edOrdemPai.Top;
+    edPodReQtdenecessaria.Left := lbPodReQtdenecessaria.Left + lbPodReQtdenecessaria.Width + 2;
+    edPodReQtdenecessaria.Text := cdsMaquinaOrdens.FieldByName('POD_RE_QTDENECESSARIA').AsString;
+    edPodReQtdenecessaria.Color := clSkyBlue;
+    edPodReQtdenecessaria.Width := 30;
+    edPodReQtdenecessaria.Font.Size := iFontSize;
+    edPodReQtdenecessaria.BorderStyle := bsNone;
+    edPodReQtdenecessaria.Height := iEditHeight;
+    edPodReQtdenecessaria.BevelInner := bvNone;
+    edPodReQtdenecessaria.BevelKind := bkFlat;
+    edPodReQtdenecessaria.BevelOuter := bvRaised;
+    edPodReQtdenecessaria.Alignment := taRightJustify;
+    edPodReQtdenecessaria.BevelWidth := iBevelWidth;
+    edPodReQtdenecessaria.OnDblClick := pnOrdemDblClick;
+    edPodReQtdenecessaria.Name := 'edPodReQtdenecessaria_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edPodReQtdenecessaria.ReadOnly := True;
+    edPodReQtdenecessaria.Cursor := crHandPoint;
+
+    {lbOrdDtRecebimento := TLabel.Create(Self);
+    lbOrdDtRecebimento.Parent := pnOrdem;
+    lbOrdDtRecebimento.Top := edPodReQtdereal.Top + 3;
+    lbOrdDtRecebimento.Left := edPodReQtdereal.Left + edPodReQtdereal.Width + 2;
+    lbOrdDtRecebimento.Caption := '';
+    lbOrdDtRecebimento.Font.Size := iFontSize;}
+
+    edOrdDtRecebimento := TEdit.Create(Self);
+    edOrdDtRecebimento.Parent := pnOrdem;
+    edOrdDtRecebimento.Top := edPodReQtdereal.Top;
+    edOrdDtRecebimento.Left := edPodReQtdenecessaria.Left + edPodReQtdenecessaria.Width + 5;
+    edOrdDtRecebimento.Text := cdsMaquinaOrdens.FieldByName('ORD_DT_RECEBIMENTO').AsString;
+    edOrdDtRecebimento.Color := clSkyBlue;
+    edOrdDtRecebimento.Width := 85;
+    edOrdDtRecebimento.Font.Size := iFontSize;
+    edOrdDtRecebimento.BorderStyle := bsNone;
+    edOrdDtRecebimento.Height := iEditHeight;
+    edOrdDtRecebimento.BevelInner := bvNone;
+    edOrdDtRecebimento.BevelKind := bkFlat;
+    edOrdDtRecebimento.BevelOuter := bvRaised;
+    edOrdDtRecebimento.BevelWidth := iBevelWidth;
+    edOrdDtRecebimento.OnDblClick := pnOrdemDblClick;
+    edOrdDtRecebimento.Name := 'edOrdDtRecebimento_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edOrdDtRecebimento.ReadOnly := True;
+    edOrdDtRecebimento.Cursor := crHandPoint;
+
+    edGruStNome := TEdit.Create(Self);
+    edGruStNome.Parent := pnOrdem;
+    edGruStNome.Top := edOrdDtRecebimento.Top;
+    edGruStNome.Left := edOrdDtRecebimento.Left + edOrdDtRecebimento.Width + 11;
+    edGruStNome.Text := cdsMaquinaOrdens.FieldByName('PRC_ST_DESCRICAO').AsString;
+    edGruStNome.Color := clSkyBlue;
+    edGruStNome.Width := 120;
+    edGruStNome.Font.Size := iFontSize;
+    edGruStNome.BorderStyle := bsNone;
+    edGruStNome.Height := iEditHeight;
+    edGruStNome.BevelInner := bvNone;
+    edGruStNome.BevelKind := bkFlat;
+    edGruStNome.BevelOuter := bvRaised;
+    edGruStNome.BevelWidth := iBevelWidth;
+    edGruStNome.OnDblClick := pnOrdemDblClick;
+    edGruStNome.Name := 'edGruStNome_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edGruStNome.ReadOnly := True;
+    edGruStNome.Cursor := crHandPoint;
+
+    // Segunda Linha
+    {edOrdStComplemento := TEdit.Create(Self);
+    edOrdStComplemento.Parent := pnOrdem;
+    edOrdStComplemento.Top := edOrdemPai.Top + edOrdemPai.Height + 4;
+    edOrdStComplemento.Left := edOrdemPai.Left;
+    edOrdStComplemento.Text := DM.iif(cdsMaquinaOrdens.FieldByName('ORD_ST_COMPLEMENTO').AsString = '', ' ', cdsMaquinaOrdens.FieldByName('ORD_ST_COMPLEMENTO').AsString);
+    edOrdStComplemento.Color := clSkyBlue;
+    edOrdStComplemento.Width := 70;
+    edOrdStComplemento.Font.Size := iFontSize;
+    edOrdStComplemento.BorderStyle := bsNone;
+    edOrdStComplemento.Height := iEditHeight;
+    edOrdStComplemento.BevelInner := bvNone;
+    edOrdStComplemento.BevelKind := bkFlat;
+    edOrdStComplemento.BevelOuter := bvRaised;
+    edOrdStComplemento.BevelWidth := iBevelWidth;
+    edOrdStComplemento.OnDblClick := pnOrdemDblClick;
+    edOrdStComplemento.Name := 'edOrdStComplemento_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edOrdStComplemento.ReadOnly := True;
+    edOrdStComplemento.Cursor := crHandPoint;}
+
+    edOrdStatus := TEdit.Create(Self);
+    edOrdStatus.Parent := pnOrdem;
+    edOrdStatus.Top := edOrdemPai.Top + edOrdemPai.Height + 4;
+    edOrdStatus.Left := edOrdemPai.Left;
+    edOrdStatus.Text := cdsMaquinaOrdens.FieldByName('ORD_ST_STATUS').AsString;
+    edOrdStatus.Color := DM.iif(cdsMaquinaOrdens.FieldByName('ORD_CH_STATUS').AsString = 'E', clLime, clYellow);
+    edOrdStatus.Width := 90;
+    edOrdStatus.Font.Size := iFontSize;
+    edOrdStatus.BorderStyle := bsNone;
+    edOrdStatus.Height := iEditHeight;
+    edOrdStatus.BevelInner := bvNone;
+    edOrdStatus.BevelKind := bkFlat;
+    edOrdStatus.BevelOuter := bvRaised;
+    edOrdStatus.BevelWidth := iBevelWidth;
+    edOrdStatus.OnDblClick := pnOrdemDblClick;
+    edOrdStatus.Name := 'edOrdStatus_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edOrdStatus.ReadOnly := True;
+    edOrdStatus.Cursor := crHandPoint;
+
+    edAptDtInicio := TEdit.Create(Self);
+    edAptDtInicio.Parent := pnOrdem;
+    edAptDtInicio.Top := edOrdStatus.Top;
+    edAptDtInicio.Left := edOrdStatus.Left + edOrdStatus.Width + 2;
+    edAptDtInicio.Text := DM.iif(cdsMaquinaOrdens.FieldByName('APT_DT_INICIO').AsString = '', ' ', cdsMaquinaOrdens.FieldByName('APT_DT_INICIO').AsString);
+    edAptDtInicio.Color := clSkyBlue;
+    edAptDtInicio.Width := 130;
+    edAptDtInicio.Font.Size := iFontSize;
+    edAptDtInicio.BorderStyle := bsNone;
+    edAptDtInicio.Height := iEditHeight;
+    edAptDtInicio.BevelInner := bvNone;
+    edAptDtInicio.BevelKind := bkFlat;
+    edAptDtInicio.BevelOuter := bvRaised;
+    edAptDtInicio.BevelWidth := iBevelWidth;
+    edAptDtInicio.OnDblClick := pnOrdemDblClick;
+    edAptDtInicio.Name := 'edAptDtInicio_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edAptDtInicio.ReadOnly := True;
+    edAptDtInicio.Cursor := crHandPoint;
+
+    lbPodReTempoExecPrevUnit := TLabel.Create(Self);
+    lbPodReTempoExecPrevUnit.Parent := pnOrdem;
+    lbPodReTempoExecPrevUnit.Top  := edOrdStatus.Top + 3;
+    lbPodReTempoExecPrevUnit.Left := edAptDtInicio.Left + edAptDtInicio.Width + 2;
+    lbPodReTempoExecPrevUnit.Caption := 'T.U.';
+    lbPodReTempoExecPrevUnit.Font.Size := iFontSize;
+    lbPodReTempoExecPrevUnit.OnDblClick := pnOrdemDblClick;
+    lbPodReTempoExecPrevUnit.Name := 'lbPodReTempoExecPrevUnit_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+
+    edPodReTempoExecPrevUnit := TEdit.Create(Self);
+    edPodReTempoExecPrevUnit.Parent := pnOrdem;
+    edPodReTempoExecPrevUnit.Top := lbPodReTempoExecPrevUnit.Top - 3;
+    edPodReTempoExecPrevUnit.Left := lbPodReTempoExecPrevUnit.Left + lbPodReTempoExecPrevUnit.Width + 2;
+    edPodReTempoExecPrevUnit.Text := cdsMaquinaOrdens.FieldByName('POD_RE_TEMPOEXEC_PREV_UNIT').AsString;
+    edPodReTempoExecPrevUnit.Color := clSkyBlue;
+    edPodReTempoExecPrevUnit.Width := 70;
+    edPodReTempoExecPrevUnit.Font.Size := iFontSize;
+    edPodReTempoExecPrevUnit.BorderStyle := bsNone;
+    edPodReTempoExecPrevUnit.Height := iEditHeight;
+    edPodReTempoExecPrevUnit.BevelInner := bvNone;
+    edPodReTempoExecPrevUnit.BevelKind := bkFlat;
+    edPodReTempoExecPrevUnit.BevelOuter := bvRaised;
+    edPodReTempoExecPrevUnit.Alignment := taRightJustify;
+    edPodReTempoExecPrevUnit.BevelWidth := iBevelWidth;
+    edPodReTempoExecPrevUnit.OnDblClick := pnOrdemDblClick;
+    edPodReTempoExecPrevUnit.Name := 'edPodReTempoExecPrevUnit_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edPodReTempoExecPrevUnit.ReadOnly := True;
+    edPodReTempoExecPrevUnit.Cursor := crHandPoint;
+
+    lbPodReTempoExecPrevTot := TLabel.Create(Self);
+    lbPodReTempoExecPrevTot.Parent := pnOrdem;
+    lbPodReTempoExecPrevTot.Top  := edPodReTempoExecPrevUnit.Top + 3;
+    lbPodReTempoExecPrevTot.Left := edPodReTempoExecPrevUnit.Left + edPodReTempoExecPrevUnit.Width + 2;
+    lbPodReTempoExecPrevTot.Caption := 'T.T.';
+    lbPodReTempoExecPrevTot.Font.Size := iFontSize;
+    lbPodReTempoExecPrevTot.OnDblClick := pnOrdemDblClick;
+    lbPodReTempoExecPrevTot.Name := 'lbPodReTempoExecPrevTot_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+
+    edPodReTempoExecPrevTot := TEdit.Create(Self);
+    edPodReTempoExecPrevTot.Parent := pnOrdem;
+    edPodReTempoExecPrevTot.Top := lbPodReTempoExecPrevTot.Top - 3;
+    edPodReTempoExecPrevTot.Left := lbPodReTempoExecPrevTot.Left + lbPodReTempoExecPrevTot.Width + 2;
+    edPodReTempoExecPrevTot.Text := cdsMaquinaOrdens.FieldByName('POD_RE_TEMPOEXEC_PREV_TOT').AsString;
+    edPodReTempoExecPrevTot.Color := clSkyBlue;
+    edPodReTempoExecPrevTot.Width := 72;
+    edPodReTempoExecPrevTot.Font.Size := iFontSize;
+    edPodReTempoExecPrevTot.BorderStyle := bsNone;
+    edPodReTempoExecPrevTot.Height := iEditHeight;
+    edPodReTempoExecPrevTot.BevelInner := bvNone;
+    edPodReTempoExecPrevTot.BevelKind := bkFlat;
+    edPodReTempoExecPrevTot.BevelOuter := bvRaised;
+    edPodReTempoExecPrevTot.Alignment := taRightJustify;
+    edPodReTempoExecPrevTot.BevelWidth := iBevelWidth;
+    edPodReTempoExecPrevTot.OnDblClick := pnOrdemDblClick;
+    edPodReTempoExecPrevTot.Name := 'edPodReTempoExecPrevTot_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edPodReTempoExecPrevTot.ReadOnly := True;
+    edPodReTempoExecPrevTot.Cursor := crHandPoint;
+
+    // Terceira Linha
+    edProStAlternativo := TEdit.Create(Self);
+    edProStAlternativo.Parent := pnOrdem;
+    edProStAlternativo.Top := edOrdStatus.Top + edOrdStatus.Height + 4;
+    edProStAlternativo.Left := edOrdStatus.Left;
+    edProStAlternativo.Text := cdsMaquinaOrdens.FieldByName('PRO_ST_ALTERNATIVO').AsString;
+    edProStAlternativo.Color := clSkyBlue;
+    edProStAlternativo.Width := 112;
+    edProStAlternativo.Font.Size := iFontSize;
+    edProStAlternativo.BorderStyle := bsNone;
+    edProStAlternativo.Height := iEditHeight;
+    edProStAlternativo.BevelInner := bvNone;
+    edProStAlternativo.BevelKind := bkFlat;
+    edProStAlternativo.BevelOuter := bvRaised;
+    edProStAlternativo.BevelWidth := iBevelWidth;
+    edProStAlternativo.OnDblClick := pnOrdemDblClick;
+    edProStAlternativo.Name := 'edProStAlternativo_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edProStAlternativo.ReadOnly := True;
+    edProStAlternativo.Cursor := crHandPoint;
+
+    edProStDescricao := TEdit.Create(Self);
+    edProStDescricao.Parent := pnOrdem;
+    edProStDescricao.Top := edProStAlternativo.Top;
+    edProStDescricao.Left := edProStAlternativo.Left + edProStAlternativo.Width + 2;
+    edProStDescricao.Text := cdsMaquinaOrdens.FieldByName('PRO_ST_DESCRICAO').AsString;
+    edProStDescricao.Color := clSkyBlue;
+    edProStDescricao.Width := 305;
+    edProStDescricao.Font.Size := iFontSize;
+    edProStDescricao.BorderStyle := bsNone;
+    edProStDescricao.Height := iEditHeight;
+    edProStDescricao.BevelInner := bvNone;
+    edProStDescricao.BevelKind := bkFlat;
+    edProStDescricao.BevelOuter := bvRaised;
+    edProStDescricao.BevelWidth := iBevelWidth;
+    edProStDescricao.OnDblClick := pnOrdemDblClick;
+    edProStDescricao.Name := 'edProStDescricao_' + cdsMaquinaOrdens.FieldByName('ORD_IN_CODIGO').AsString + 'x' + cdsMaquinaOrdens.FieldByName('PLF_IN_SQOPERACAO').AsString;
+    edProStDescricao.ReadOnly := True;
+    edProStDescricao.Cursor := crHandPoint;
+
+    cdsMaquinaOrdens.Next;
+
+  end;
+
+end;
+
+procedure TfrmFollowup.edORDEMOPERACAOExit(Sender: TObject);
+var
+  vOrdPlf : String;
+  vOrd : Integer;
+  vPlf : Integer;
+begin
+
+  if edORDEMOPERACAO.Text = '' then
+    Exit;
+
+  vOrdPlf := edORDEMOPERACAO.Text;
+  vOrd := StrToInt(Copy(vOrdPlf, 0, Length(vOrdPlf) -3));
+  vPlf := StrToInt(Copy(vOrdPlf, Length(vOrdPlf) -2));
+
+  AbreApontamentos(vOrd, vPlf);
+
+  edORDEMOPERACAO.Text := '';
+
+end;
+
+procedure TfrmFollowup.FormCreate(Sender: TObject);
+begin
+
+  Self.Caption := Self.Caption + ' - ' + DM.sVersao;
+
+  cdsMaquinaOrdens := TClientDataSet.Create(Self);
+
+
+  edMAQ_IN_CODIGO_I.Text := '1';
+  edMAQ_IN_CODIGO_F.Text := '999999';
+  edCEL_IN_CODIGO_I.Text := '1';
+  edCEL_IN_CODIGO_F.Text := '999999';
+  edRank.Text := '3';
+  boFiltrarClick(boFiltrar);
+
+  edHistoricoAPT_DT_APONTAMENTO.Text := FormatDateTime('dd/mm/yyyy' , Now);
+  edHistoricoAPT_DT_ENCERRAMENTO.Text := FormatDateTime('dd/mm/yyyy' , Now);
+
+end;
+
+procedure TfrmFollowup.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+
+  if Key = #13 then
+  begin
+    Key := #0;
+    Perform(WM_NEXTDLGCTL, 0, 0);
+  end;
+
+end;
+
+procedure TfrmFollowup.pnOrdemEnter(Sender: TObject);
+var
+  vOrdPlf : String;
+  vOrd : Integer;
+  vPlf : Integer;
+begin
+
+  vOrdPlf := Copy(TPanel(Sender).Name, (Pos('_', TPanel(Sender).Name)+1));
+  vOrd := StrToInt(Copy(vOrdPlf, 0, (Pos('x', vOrdPlf)-1)));
+  vPlf := StrToInt(Copy(vOrdPlf, Pos('x', vOrdPlf)+1));
+
+  if ((vORD_IN_CODIGOSelecionado > 0) and (vORD_IN_CODIGOSelecionado > 0)) then
+  begin
+    if ((vOrd <> vORD_IN_CODIGOSelecionado) or (vPlf <> vPLF_IN_SQOPERACAOSelecionado)) then
+    begin
+      Try
+        TPanel(Self.FindComponent('pnOrdem_' + IntToStr(vORD_IN_CODIGOSelecionado) + 'x' + IntToStr(vPLF_IN_SQOPERACAOSelecionado))).Color := clBtnFace;
+      Except
+      End;
+    end;
+  end;
+
+  TPanel(Sender).Color := clInfoBk;
+  vORD_IN_CODIGOSelecionado := vOrd;
+  vPLF_IN_SQOPERACAOSelecionado := vPlf;
+
+end;
+
+procedure TfrmFollowup.pnOrdemExit(Sender: TObject);
+begin
+
+  //if TPanel(Sender).Tag <> vORD_IN_CODIGOSelecionado then
+  //TPanel(Sender).Color := clBtnFace;
+  null;
+
+end;
+
+procedure TfrmFollowup.Timer1Timer(Sender: TObject);
+begin
+
+  if Screen.ActiveForm = Self then
+  begin
+
+    if pcPrincipal.ActivePage = tsDados then
+    begin
+
+      if edORDEMOPERACAO.CanFocus then
+      begin
+        edORDEMOPERACAO.SetFocus;
+      end;
+
+    end;
+
+  end;
+
+end;
+
+procedure TfrmFollowup.pnOrdemDblClick(Sender: TObject);
+begin
+
+  pnOrdemEnter(Sender);
+  AbreApontamentos(vORD_IN_CODIGOSelecionado, vPLF_IN_SQOPERACAOSelecionado);
+
+end;
+
+
+procedure TfrmFollowup.AbreApontamentos(pORD_IN_CODIGO, pPLF_IN_SQOPERACAO : Integer);
+var
+  cds : TClientDataSet;
+  vParams : TStringStream;
+begin
+
+  vParams := TStringStream.Create;
+  vParams.WriteString('"<parametros>');
+  vParams.WriteString('<evento>P_ORDEM_OPERACAO_LST</evento>');
+  vParams.WriteString('<org_in_codigo>' + IntToStr(wORG_IN_CODIGO) + '</org_in_codigo>');
+  vParams.WriteString('<ORD_IN_CODIGO>' + IntToStr(pORD_IN_CODIGO) + ' </ORD_IN_CODIGO>');
+  vParams.WriteString('<PLF_IN_SQOPERACAO>' + IntToStr(pPLF_IN_SQOPERACAO) + ' </PLF_IN_SQOPERACAO>');
+  vParams.WriteString('</parametros>"');
+
+  cds := TClientDataSet.Create(Self);
+  cds := DM.f_evento_lst(vParams);
+
+  if ((not cds.Active) or (cds.IsEmpty)) then
+  begin
+    MessageBox(handle, 'Ordem/Operação não encontrada ou já finalizada.' ,'Atenção:', MB_OK or MB_ICONERROR);
+    Exit;
+  end;
+
+  if cds.FieldByName('POD_BO_BLOQUEIA_APT_SEQ').AsString = 'S' then
+  begin
+    MessageBox(handle,'Ordem/Operação fora da sequência de planejamento. Apontamento não permitido.','Atenção:', MB_OK or MB_ICONERROR);
+    Exit;
+  end;
+
+  frmOrdemApontamento := TfrmOrdemApontamento.Create(Self);
+  frmOrdemApontamento.edORD_IN_CODIGO.ReadOnly := True;
+  frmOrdemApontamento.edORD_IN_CODIGO.Color := cl3DLight;
+  frmOrdemApontamento.edORD_IN_CODIGO.TabStop := False;
+  frmOrdemApontamento.edORD_IN_CODIGO.Text := IntToStr(pORD_IN_CODIGO);
+  frmOrdemApontamento.edORD_IN_CODIGOExit(frmOrdemApontamento.edORD_IN_CODIGO);
+
+  frmOrdemApontamento.edPLF_IN_SQOPERACAO.ReadOnly := True;
+  frmOrdemApontamento.edPLF_IN_SQOPERACAO.Color := cl3DLight;
+  frmOrdemApontamento.edPLF_IN_SQOPERACAO.TabStop := False;
+  frmOrdemApontamento.edPLF_IN_SQOPERACAO.Text := IntToStr(pPLF_IN_SQOPERACAO);
+  frmOrdemApontamento.edPLF_IN_SQOPERACAOExit(frmOrdemApontamento.edPLF_IN_SQOPERACAO);
+
+  // Verifica quantas maquina existem no centro de trabalho, se existir somente uma, sugere ela
+  frmConsultaGrid := TFrmConsultaGrid.Create(Self);
+  frmConsultaGrid.vEvento := 'P_CMAQUINA_LST';
+  frmConsultaGrid.vCTR_IN_CODIGO := frmOrdemApontamento.edMAQ_IN_CODIGO.Text;
+  frmConsultaGrid.FormShow(frmConsultaGrid);
+  if frmConsultaGrid.cdsConsulta.RecordCount = 1 then
+  begin
+    frmOrdemApontamento.edCMAQ_IN_CODIGO.Text := frmConsultaGrid.cdsConsulta.FieldByName('CMAQ_IN_CODIGO').AsString;
+    frmOrdemApontamento.edCMAQ_IN_CODIGOExit(frmOrdemApontamento.edCMAQ_IN_CODIGO);
+  end;
+  FreeAndNil(frmConsultaGrid);
+
+  frmOrdemApontamento.Show;
+
+end;
+
+procedure TfrmFollowup.boMaquinaHistoricoClick(Sender: TObject);
+var
+  iMAQ_IN_CODIGO : String;
+begin
+
+  iMAQ_IN_CODIGO := Copy(TSpeedButton(Sender).Name, (Pos('_', TSpeedButton(Sender).Name)+1));
+
+  pcPrincipal.ActivePage := tsHistorico;
+  edHistoricoORD_IN_CODIGO.Text := '';
+  edHistoricoMAQ_IN_CODIGO.Text := iMAQ_IN_CODIGO;
+  edHistoricoAPT_DT_APONTAMENTO.Text := FormatDateTime('dd/mm/yyyy' , Now);
+  edHistoricoAPT_DT_ENCERRAMENTO.Text := FormatDateTime('dd/mm/yyyy' , Now);
+  boHistoricoFiltrarClick(boHistoricoFiltrar);
+  gdHistorico.SetFocus;
+
+end;
+
+end.
