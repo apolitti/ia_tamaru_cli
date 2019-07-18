@@ -362,8 +362,6 @@ object frmApontamentoImprodutivo: TfrmApontamentoImprodutivo
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 4
-        ExplicitLeft = 9
-        ExplicitTop = 194
         object Label2: TLabel
           Left = 7
           Top = 2

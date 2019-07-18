@@ -440,6 +440,7 @@ object frmOrdemOperadorApontamentos: TfrmOrdemOperadorApontamentos
     Width = 776
     Height = 37
     Align = alBottom
+    BevelOuter = bvNone
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11

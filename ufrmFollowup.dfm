@@ -25,7 +25,7 @@ object frmFollowup: TfrmFollowup
     Top = 0
     Width = 834
     Height = 336
-    ActivePage = tsDados
+    ActivePage = tsFiltro
     Align = alClient
     TabOrder = 0
     object tsFiltro: TTabSheet

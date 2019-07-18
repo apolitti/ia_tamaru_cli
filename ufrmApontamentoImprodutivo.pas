@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.WinXPickers, Data.DB, Datasnap.DBClient, Vcl.ComCtrls, Vcl.Mask;
+  Vcl.WinXPickers, Data.DB, Datasnap.DBClient, Vcl.ComCtrls, Vcl.Mask, HTTPApp, IdURI;
 
 type
   TfrmApontamentoImprodutivo = class(TForm)
@@ -192,7 +192,7 @@ begin
   vParams.WriteString('<APT_IN_SEQUENCIA>' + edAPT_IN_SEQUENCIA.Text + '</APT_IN_SEQUENCIA>');
   vParams.WriteString('<APT_CH_STATUS>' + vAPT_CH_STATUS + '</APT_CH_STATUS>');
   vParams.WriteString('<ATI_IN_CODIGO>' + edAPT_ATI_IN_CODIGO.Text + '</ATI_IN_CODIGO>');
-  vParams.WriteString('<APT_ST_OBSERVACAO>' + edAPT_ST_OBSERVACAO.Text + '</APT_ST_OBSERVACAO>');
+  vParams.WriteString('<APT_ST_OBSERVACAO>' + System.UTF8Encode(edAPT_ST_OBSERVACAO.Text) + '</APT_ST_OBSERVACAO>');
   vParams.WriteString('</PARAMETROS>"');
 
   try

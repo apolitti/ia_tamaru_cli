@@ -330,12 +330,25 @@ end;
 
 function TDM.f_evento_lst(pParams : TStringStream) : TClientDataSet;
 var
+  I : Integer;
+
   r2 : TStringStream;
   cds : TClientDataSet;
+
+  vParamsStrings : TStringList;
+  vParamsSream : TStringStream;
 
 begin
 
   r2 := TStringStream.Create('',TEncoding.UTF8);
+
+  // Traz os parametros para usar o HTTPEncode e transforma devolta em Stream
+  {vParamsStrings := TStringList.Create;
+  vParamsSream := TStringStream.Create;
+  pParams.Seek(0, soFromBeginning);
+  vParamsStrings.Add(HTTPEncode(pParams.DataString));
+  vParamsStrings.SaveToStream(vParamsSream);}
+
 
   IdHTTP1.Put(wURL + 'p_evento_lst', pParams, r2);
   cds := TClientDataSet.Create(Self);

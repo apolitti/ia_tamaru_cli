@@ -73,6 +73,7 @@ type
     procedure AbreApontamentos(pORD_IN_CODIGO, pPLF_IN_SQOPERACAO: Integer);
     procedure boMaquinaHistoricoClick(Sender: TObject);
     procedure boMaquinaOcorrenciaClick(Sender: TObject);
+    procedure boMaquinaOrdensClick(Sender: TObject);
   public
     { Public declarations }
     vORD_IN_CODIGOSelecionado : Integer;
@@ -87,7 +88,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDM, ufrmOrdemOperadorApontamentos, ufrmOrdemApontamento, ufrmConsultaGrid, ufrmApontamentoImprodutivo;
+uses uDM, ufrmOrdemOperadorApontamentos, ufrmOrdemApontamento, ufrmConsultaGrid, ufrmApontamentoImprodutivo, ufrmFollowupMaquinaOrdens;
 
 procedure TfrmFollowup.boApontamentoImprodutivoClick(Sender: TObject);
 begin
@@ -257,6 +258,7 @@ var
   pnOrdem : TPanel;
   boMaquinaHistorico : TSpeedButton;
   boMaquinaOcorrencia : TSpeedButton;
+  boMaquinaOrdens : TSpeedButton;
 
   // Primeira Linha
   //edOrdem : TEdit;
@@ -385,7 +387,7 @@ begin
       boMaquinaHistorico.Left := edMaqStNome.Left;
       boMaquinaHistorico.Top := edMaqStNome.Top + edMaqStNome.Height + 2;
       boMaquinaHistorico.Flat := True;
-      boMaquinaHistorico.Width := 80;
+      boMaquinaHistorico.Width := 70;
       boMaquinaHistorico.Height := 26;
       boMaquinaHistorico.OnClick := boMaquinaHistoricoClick;
       boMaquinaHistorico.Name := 'boMaquinaHistorico_' + cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsString;
@@ -393,13 +395,24 @@ begin
       boMaquinaOcorrencia := TSpeedButton.Create(Self);
       boMaquinaOcorrencia.Parent := pnMaquina;
       boMaquinaOcorrencia.Caption := 'Ocorrência';
-      boMaquinaOcorrencia.Left := boMaquinaHistorico.Left + boMaquinaHistorico.Width + 10;
+      boMaquinaOcorrencia.Left := boMaquinaHistorico.Left + boMaquinaHistorico.Width + 5;
       boMaquinaOcorrencia.Top := boMaquinaHistorico.Top;
       boMaquinaOcorrencia.Flat := True;
-      boMaquinaOcorrencia.Width := 80;
+      boMaquinaOcorrencia.Width := 70;
       boMaquinaOcorrencia.Height := 26;
       boMaquinaOcorrencia.OnClick := boMaquinaOcorrenciaClick;
       boMaquinaOcorrencia.Name := 'boMaquinaOcorrencia_' + cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsString;
+
+      boMaquinaOrdens := TSpeedButton.Create(Self);
+      boMaquinaOrdens.Parent := pnMaquina;
+      boMaquinaOrdens.Caption := 'Ordens';
+      boMaquinaOrdens.Left := boMaquinaOcorrencia.Left + boMaquinaOcorrencia.Width + 5;
+      boMaquinaOrdens.Top := boMaquinaOcorrencia.Top;
+      boMaquinaOrdens.Flat := True;
+      boMaquinaOrdens.Width := 70;
+      boMaquinaOrdens.Height := 26;
+      boMaquinaOrdens.OnClick := boMaquinaOrdensClick;
+      boMaquinaOrdens.Name := 'boMaquinaOrdens_' + cdsMaquinaOrdens.FieldByName('MAQ_IN_CODIGO').AsString;
 
       sbMaquina := TScrollBox.Create(Self);
       sbMaquina.Parent := pnMaquinaPrinc;
@@ -958,6 +971,29 @@ begin
   frmApontamentoImprodutivo.edAPT_MAQ_IN_CODIGO.Text := vMAQ_IN_CODIGO;
   frmApontamentoImprodutivo.edAPT_MAQ_IN_CODIGOExit(frmApontamentoImprodutivo.edAPT_MAQ_IN_CODIGO);
   frmApontamentoImprodutivo.Show();
+
+end;
+
+procedure TfrmFollowup.boMaquinaOrdensClick(Sender: TObject);
+var
+  vMAQ_IN_CODIGO : String;
+  vORD_IN_CODIGO : Integer;
+  vPLF_IN_SQOPERACAO : Integer;
+begin
+
+  vMAQ_IN_CODIGO := Copy(TSpeedButton(Sender).Name, (Pos('_', TSpeedButton(Sender).Name)+1));
+
+  frmFollowupMaquinaOrdens := TfrmFollowupMaquinaOrdens.Create(Self);
+  frmFollowupMaquinaOrdens.edMAQ_IN_CODIGO.Text := vMAQ_IN_CODIGO;
+  frmFollowupMaquinaOrdens.boFiltrarClick(frmFollowupMaquinaOrdens.boFiltrar);
+  frmFollowupMaquinaOrdens.edMAQ_IN_CODIGO.Enabled := False;
+  if (frmFollowupMaquinaOrdens.ShowModal = mrOk) then
+  begin
+    vORD_IN_CODIGO := frmFollowupMaquinaOrdens.cdsOrdens.FieldByName('ORD_IN_CODIGO').AsInteger;
+    vPLF_IN_SQOPERACAO := frmFollowupMaquinaOrdens.cdsOrdens.FieldByName('PLF_IN_SQOPERACAO').AsInteger;
+    FreeAndNil(frmFollowupMaquinaOrdens);
+    AbreApontamentos(vORD_IN_CODIGO, vPLF_IN_SQOPERACAO);
+  end;
 
 end;
 

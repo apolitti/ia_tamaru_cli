@@ -1,0 +1,317 @@
+object frmFollowupMaquinaOrdens: TfrmFollowupMaquinaOrdens
+  Left = 0
+  Top = 0
+  Caption = 'Followup > Maquina > Ordens'
+  ClientHeight = 325
+  ClientWidth = 818
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnHistoricoFiltro: TPanel
+    Left = 0
+    Top = 0
+    Width = 818
+    Height = 59
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    ExplicitWidth = 749
+    object Label9: TLabel
+      Left = 7
+      Top = 3
+      Width = 93
+      Height = 13
+      Caption = 'Centro de Trabalho'
+    end
+    object Label11: TLabel
+      Left = 112
+      Top = 3
+      Width = 51
+      Height = 13
+      Caption = 'Data Inicio'
+    end
+    object Label10: TLabel
+      Left = 269
+      Top = 3
+      Width = 64
+      Height = 13
+      Caption = 'Data Termino'
+    end
+    object edMAQ_IN_CODIGO: TEdit
+      Left = 7
+      Top = 18
+      Width = 93
+      Height = 27
+      BevelInner = bvNone
+      BevelKind = bkFlat
+      BevelOuter = bvRaised
+      BevelWidth = 4
+      BorderStyle = bsNone
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+    object boFiltrar: TButton
+      Left = 426
+      Top = 18
+      Width = 118
+      Height = 27
+      Caption = 'Filtrar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      HotImageIndex = 0
+      ImageIndex = 0
+      ImageMargins.Left = 10
+      ImageMargins.Right = -10
+      Images = DM.ilBotoes
+      ParentFont = False
+      TabOrder = 1
+      OnClick = boFiltrarClick
+    end
+    object edAPT_DT_APONTAMENTO: TMaskEdit
+      Left = 112
+      Top = 18
+      Width = 145
+      Height = 27
+      BevelInner = bvNone
+      BevelOuter = bvRaised
+      BevelKind = bkFlat
+      BevelWidth = 4
+      BorderStyle = bsNone
+      EditMask = '99/99/9999;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      MaxLength = 10
+      ParentFont = False
+      TabOrder = 2
+      Text = '  /  /    '
+    end
+    object edAPT_DT_ENCERRAMENTO: TMaskEdit
+      Left = 269
+      Top = 18
+      Width = 145
+      Height = 27
+      BevelInner = bvNone
+      BevelOuter = bvRaised
+      BevelKind = bkFlat
+      BevelWidth = 4
+      BorderStyle = bsNone
+      EditMask = '99/99/9999;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      MaxLength = 10
+      ParentFont = False
+      TabOrder = 3
+      Text = '  /  /    '
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 288
+    Width = 818
+    Height = 37
+    Align = alBottom
+    BevelOuter = bvNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    ExplicitLeft = -27
+    ExplicitWidth = 776
+    DesignSize = (
+      818
+      37)
+    object Button1: TButton
+      Left = 703
+      Top = 6
+      Width = 100
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Fechar'
+      TabOrder = 0
+      ExplicitLeft = 661
+    end
+    object boApontar: TButton
+      Left = 583
+      Top = 6
+      Width = 100
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Apontar'
+      TabOrder = 1
+      OnClick = boApontarClick
+      ExplicitLeft = 550
+    end
+  end
+  object gdOrdens: TDBGrid
+    Left = 0
+    Top = 59
+    Width = 818
+    Height = 229
+    Align = alClient
+    DataSource = dsOrdens
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -14
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    ParentFont = False
+    TabOrder = 2
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    OnDblClick = gdOrdensDblClick
+    OnTitleClick = gdOrdensTitleClick
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'SEQ'
+        Title.Caption = 'Seq.'
+        Width = 80
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ORD_ST_SEMANA'
+        Title.Caption = 'Semana'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'POD_ST_BLOQUEIA_APT_SEQ'
+        Title.Caption = 'Apt. Bloqueado'
+        Width = 80
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ORD_ST_STATUS'
+        Title.Caption = 'Status Ordem'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ORD_IN_CODIGO_PAI'
+        Title.Caption = 'Ordem'
+        Width = 120
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ORD_DT_RECEBIMENTO'
+        Title.Caption = 'Data Recebimento'
+        Width = 110
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'APT_DT_INICIO'
+        Title.Caption = 'Apt. Iniciado'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PRO_ST_ALTERNATIVO'
+        Title.Caption = 'C'#243'd. Produto'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PRO_ST_DESCRICAO'
+        Title.Caption = 'Produto Descri'#231#227'o'
+        Width = 200
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PLF_IN_SQOPERACAO'
+        Title.Caption = 'Seq. Opera'#231#227'o'
+        Width = 80
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'OPR_IN_CODIGO'
+        Title.Caption = 'Opera'#231#227'o'
+        Width = 80
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'POD_RE_QTDENECESSARIA'
+        Title.Caption = 'Qtde. Necess'#225'ria'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'APT_RE_QUANTIDADEREF'
+        Title.Caption = 'Qtde. Realizada'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'POD_RE_QTDEREAL'
+        Title.Caption = 'Saldo'
+        Width = 100
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'POD_RE_TEMPOEXEC_PREV_UNIT'
+        Title.Caption = 'Tempo Unit'#225'rio'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'POD_RE_TEMPOEXEC_PREV_TOT'
+        Title.Caption = 'Tempo Total'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'PRC_ST_DESCRICAO'
+        Visible = True
+      end>
+  end
+  object cdsOrdens: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 584
+    Top = 200
+  end
+  object dsOrdens: TDataSource
+    DataSet = cdsOrdens
+    Left = 584
+    Top = 248
+  end
+end

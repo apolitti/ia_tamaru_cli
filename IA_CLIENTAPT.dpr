@@ -16,7 +16,8 @@ uses
   ufrmOrdemApontamento in 'ufrmOrdemApontamento.pas' {frmOrdemApontamento},
   ufrmPrincipal in 'ufrmPrincipal.pas' {frmPrincipal},
   ufrmConsultaGrid in 'ufrmConsultaGrid.pas' {frmConsultaGrid},
-  ufrmApontamentoImprodutivo in 'ufrmApontamentoImprodutivo.pas' {frmApontamentoImprodutivo};
+  ufrmApontamentoImprodutivo in 'ufrmApontamentoImprodutivo.pas' {frmApontamentoImprodutivo},
+  ufrmFollowupMaquinaOrdens in 'ufrmFollowupMaquinaOrdens.pas' {frmFollowupMaquinaOrdens};
 
 {$R *.res}
 
@@ -25,5 +26,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TfrmPrincipal, frmPrincipal);
+  Application.CreateForm(TfrmFollowupMaquinaOrdens, frmFollowupMaquinaOrdens);
   Application.Run;
 end.

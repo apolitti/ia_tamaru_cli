@@ -1,0 +1,115 @@
+unit ufrmFollowupMaquinaOrdens;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient, ADODB;
+
+type
+  TfrmFollowupMaquinaOrdens = class(TForm)
+    pnHistoricoFiltro: TPanel;
+    Label9: TLabel;
+    Label11: TLabel;
+    Label10: TLabel;
+    edMAQ_IN_CODIGO: TEdit;
+    boFiltrar: TButton;
+    edAPT_DT_APONTAMENTO: TMaskEdit;
+    edAPT_DT_ENCERRAMENTO: TMaskEdit;
+    Panel1: TPanel;
+    Button1: TButton;
+    gdOrdens: TDBGrid;
+    cdsOrdens: TClientDataSet;
+    dsOrdens: TDataSource;
+    boApontar: TButton;
+    procedure boFiltrarClick(Sender: TObject);
+    procedure boApontarClick(Sender: TObject);
+    procedure gdOrdensDblClick(Sender: TObject);
+    procedure gdOrdensTitleClick(Column: TColumn);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmFollowupMaquinaOrdens: TfrmFollowupMaquinaOrdens;
+
+implementation
+
+{$R *.dfm}
+
+uses uDM;
+
+procedure TfrmFollowupMaquinaOrdens.boApontarClick(Sender: TObject);
+begin
+
+  if not(cdsOrdens.Active) or cdsOrdens.IsEmpty then
+    Exit;
+
+  Self.ModalResult := mrOk;
+
+end;
+
+procedure TfrmFollowupMaquinaOrdens.boFiltrarClick(Sender: TObject);
+var
+  vParams : TStringStream;
+
+begin
+
+  vParams := TStringStream.Create;
+  vParams.WriteString('"<PARAMETROS>');
+  vParams.WriteString('<EVENTO>P_ORDEM_OPERACAO_LST</EVENTO>');
+  vParams.WriteString('<ORG_IN_CODIGO>' + IntToStr(wORG_IN_CODIGO) + '</ORG_IN_CODIGO>');
+  vParams.WriteString('<MAQ_IN_CODIGO>' + edMAQ_IN_CODIGO.Text + '</MAQ_IN_CODIGO>');
+  vParams.WriteString('<APT_DT_APONTAMENTO>' + DM.iif(edAPT_DT_APONTAMENTO.Text = '  /  /    ', '', edAPT_DT_APONTAMENTO.Text) + '</APT_DT_APONTAMENTO>');
+  vParams.WriteString('<APT_DT_ENCERRAMENTO>' + DM.iif(edAPT_DT_ENCERRAMENTO.Text = '  /  /    ', '', edAPT_DT_ENCERRAMENTO.Text) + '</APT_DT_ENCERRAMENTO>');
+  vParams.WriteString('</PARAMETROS>"');
+
+  cdsOrdens := DM.f_evento_lst(vParams);
+  dsOrdens.DataSet := cdsOrdens;
+  gdOrdens.DataSource := dsOrdens;
+
+  if cdsOrdens.Active then
+  begin
+    cdsOrdens.Last;
+    cdsOrdens.First;
+  end;
+
+
+end;
+
+procedure TfrmFollowupMaquinaOrdens.gdOrdensDblClick(Sender: TObject);
+begin
+
+  boApontarClick(boApontar);
+
+end;
+
+procedure TfrmFollowupMaquinaOrdens.gdOrdensTitleClick(Column: TColumn);
+{$J+}const PreviousColumnIndex : integer = -1;
+{$J-}
+begin
+  if gdOrdens.DataSource.DataSet is TDataSet then
+  begin
+    with TDataSet(gdOrdens.DataSource.DataSet) do
+    begin
+    try
+      gdOrdens.Columns[PreviousColumnIndex].title.Font.Style :=
+      gdOrdens.Columns[PreviousColumnIndex].title.Font.Style - [fsBold];
+    except
+    end;
+    Column.title.Font.Style :=
+    Column.title.Font.Style + [fsBold];
+    PreviousColumnIndex := Column.Index;
+    if (Pos(WideString(Column.Field.FieldName), Sort) = 1)
+    and (Pos(WideString(' DESC'), Sort)= 0) then
+      Sort := Column.Field.FieldName + ' DESC'
+    else
+      Sort := Column.Field.FieldName + ' ASC';
+    end;
+  end;
+end;
+
+end.

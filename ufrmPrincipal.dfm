@@ -3,7 +3,7 @@ object frmPrincipal: TfrmPrincipal
   Top = 0
   Caption = 'Apontamentos'
   ClientHeight = 339
-  ClientWidth = 821
+  ClientWidth = 776
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
